@@ -6,158 +6,316 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
-    <script src="https://cdn.jsdelivr.net/gh/livewire/livewire@v3.x.x/dist/livewire.min.js" defer></script>
 </head>
 <body>
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <i class="bi bi-graph-up-arrow"></i> CRM Platform
+    <!-- Primary Sidebar (Icons) -->
+    <div class="sidebar-primary">
+        <!-- Logo -->
+        <div class="sidebar-primary-logo">
+            <!-- Buraya kendi logonuzu ekleyin -->
+            <img src="{{ asset('logo1.svg') }}" alt="Logo" class="d-none" id="custom-logo">
+            <!-- Varsayılan Icon -->
+            <i class="bi bi-graph-up-arrow text-primary" id="default-logo" style="font-size: 2rem;"></i>
+        </div>
+
+        <!-- Navigation -->
+        <div class="sidebar-primary-nav">
+            <a href="#" class="sidebar-primary-item active" data-module="sales">
+                <i class="bi bi-bag-check"></i>
+                <span>Sales</span>
             </a>
             
-            <div class="d-flex align-items-center">
-                <!-- Notifications -->
-                <div class="dropdown me-3">
-                    <button class="btn btn-dark position-relative" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            3
-                        </span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><h6 class="dropdown-header">Notifications</h6></li>
-                        <li><a class="dropdown-item" href="#"><small>New lead assigned to you</small></a></li>
-                        <li><a class="dropdown-item" href="#"><small>Task deadline approaching</small></a></li>
-                        <li><a class="dropdown-item" href="#"><small>Opportunity updated</small></a></li>
-                    </ul>
-                </div>
+            <a href="#" class="sidebar-primary-item" data-module="marketing">
+                <i class="bi bi-megaphone"></i>
+                <span>Marketing</span>
+            </a>
+            
+            <a href="#" class="sidebar-primary-item" data-module="support">
+                <i class="bi bi-headset"></i>
+                <span>Support</span>
+            </a>
+            
+            <a href="#" class="sidebar-primary-item" data-module="analytics">
+                <i class="bi bi-graph-up"></i>
+                <span>Analytics</span>
+            </a>
+            
+            <a href="#" class="sidebar-primary-item" data-module="settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+        </div>
 
-                <!-- User Menu -->
-                <div class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+        <!-- User Profile (Bottom) -->
+        <div class="sidebar-primary-item" style="margin-top: auto;">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile</span>
+        </div>
+    </div>
+
+    <!-- Secondary Sidebar (Details) -->
+    <div class="sidebar-secondary" id="secondarySidebar">
+        <div class="sidebar-secondary-header">
+            <h5>Sales</h5>
+            
+            <!-- Search -->
+            <div class="sidebar-secondary-search position-relative mt-3">
+                <i class="bi bi-search"></i>
+                <input type="text" class="form-control" placeholder="Search...">
+            </div>
+        </div>
+
+        <div class="sidebar-secondary-nav">
+            <!-- Dashboard Section -->
+            <div class="sidebar-secondary-section">
+                <div class="sidebar-secondary-section-title">Overview</div>
+                <a href="{{ route('dashboard') }}" class="sidebar-secondary-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+
+            <!-- CRM Section -->
+            <div class="sidebar-secondary-section">
+                <div class="sidebar-secondary-section-title">CRM</div>
+                
+                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('leads.*') ? 'active' : '' }}">
+                    <i class="bi bi-stars"></i>
+                    <span>Leads</span>
+                    <span class="badge bg-warning text-dark">12</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i>
+                    <span>Contacts</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('accounts.*') ? 'active' : '' }}">
+                    <i class="bi bi-building"></i>
+                    <span>Accounts</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('opportunities.*') ? 'active' : '' }}">
+                    <i class="bi bi-trophy"></i>
+                    <span>Opportunities</span>
+                    <span class="badge bg-success">8</span>
+                </a>
+            </div>
+
+            <!-- Activities Section -->
+            <div class="sidebar-secondary-section">
+                <div class="sidebar-secondary-section-title">Activities</div>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-telephone"></i>
+                    <span>Calls</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-envelope"></i>
+                    <span>Emails</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Meetings</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-check2-square"></i>
+                    <span>Tasks</span>
+                    <span class="badge bg-danger">3</span>
+                </a>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="sidebar-secondary-section">
+                <div class="sidebar-secondary-section-title">Insights</div>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Reports</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-pie-chart"></i>
+                    <span>Analytics</span>
+                </a>
+                
+                <a href="#" class="sidebar-secondary-item">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Forecasting</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <!-- Left Side -->
+        <div class="d-flex align-items-center">
+            <!-- Mobile Menu Toggle -->
+            <button class="btn btn-link sidebar-toggle me-3" id="sidebarToggle">
+                <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+            </button>
+
+            <!-- Page Title / Breadcrumb -->
+            <div>
+                <h5 class="mb-0 fw-semibold">Dashboard</h5>
+                <small class="text-muted">Welcome back, {{ Auth::user()->name }}</small>
+            </div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="d-flex align-items-center gap-3">
+            <!-- Quick Actions -->
+            <button class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                <span class="d-none d-md-inline ms-1">Create</span>
+            </button>
+
+            <!-- Search (Desktop) -->
+            <div class="position-relative d-none d-lg-block" style="width: 300px;">
+                <i class="bi bi-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                <input type="text" class="form-control" placeholder="Search anything..." style="padding-left: 2.5rem; border-radius: 8px;">
+            </div>
+
+            <!-- Notifications -->
+            <div class="dropdown">
+                <button class="btn btn-link text-dark position-relative" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-bell" style="font-size: 1.25rem;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.625rem;">
+                        3
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                    <li class="dropdown-header d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Notifications</span>
+                        <a href="#" class="text-primary" style="font-size: 0.875rem;">Mark all read</a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item py-3" href="#">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-person-plus text-success"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 fw-medium" style="font-size: 0.875rem;">New lead assigned</p>
+                                    <small class="text-muted">John Doe assigned to you</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-3" href="#">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-check-circle text-info"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 fw-medium" style="font-size: 0.875rem;">Task completed</p>
+                                    <small class="text-muted">Follow-up call completed</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-3" href="#">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-calendar-event text-warning"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="mb-1 fw-medium" style="font-size: 0.875rem;">Upcoming meeting</p>
+                                    <small class="text-muted">Meeting in 30 minutes</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="text-center">
+                        <a href="#" class="dropdown-item text-primary fw-medium">View all notifications</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- User Menu -->
+            <div class="dropdown">
+                <button class="btn btn-link text-dark d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                    <div class="d-none d-md-block text-end">
+                        <div class="fw-semibold" style="font-size: 0.875rem;">{{ Auth::user()->name }}</div>
+                        <small class="text-muted">{{ Auth::user()->roles->first()?->name ?? 'User' }}</small>
+                    </div>
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <span class="fw-bold">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                    </div>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Settings</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i> Help</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-sticky">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <h6 class="sidebar-heading text-muted px-3 mt-3 mb-1">
-                        <small>SALES</small>
-                    </h6>
-                </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('leads.*') ? 'active' : '' }}" href="{{ route('leads.index') }}">
-                        <i class="bi bi-stars"></i> Leads
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('contacts.*') ? 'active' : '' }}" href="{{ route('contacts.index') }}">
-                        <i class="bi bi-people"></i> Contacts
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('accounts.*') ? 'active' : '' }}" href="#">
-                        <i class="bi bi-building"></i> Accounts
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('opportunities.*') ? 'active' : '' }}" href="#">
-                        <i class="bi bi-trophy"></i> Opportunities
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <h6 class="sidebar-heading text-muted px-3 mt-3 mb-1">
-                        <small>ACTIVITIES</small>
-                    </h6>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('activities.*') ? 'active' : '' }}" href="#">
-                        <i class="bi bi-clock-history"></i> Activities
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('tasks.*') ? 'active' : '' }}" href="#">
-                        <i class="bi bi-check2-square"></i> Tasks
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <h6 class="sidebar-heading text-muted px-3 mt-3 mb-1">
-                        <small>REPORTS</small>
-                    </h6>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-graph-up"></i> Analytics
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-file-earmark-text"></i> Reports
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
     <!-- Main Content -->
-    <main class="pt-5">
-        <div class="container-fluid px-4 py-4">
-            <!-- Flash Messages -->
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+    <main class="main-content">
+        <!-- Flash Messages -->
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i> {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
-            <!-- Page Content -->
-            {{ $slot }}
-        </div>
+        <!-- Page Content -->
+        {{ $slot }}
     </main>
+
+    <!-- JavaScript for Mobile Toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const secondarySidebar = document.getElementById('secondarySidebar');
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    secondarySidebar.classList.toggle('show');
+                });
+            }
+
+            // Logo visibility control
+            const customLogo = document.getElementById('custom-logo');
+            const defaultLogo = document.getElementById('default-logo');
+            
+            // Eğer /public/logo.svg dosyası varsa custom logoyu göster
+            const img = new Image();
+            img.src = '/logo.svg';
+            img.onload = function() {
+                customLogo.classList.remove('d-none');
+                defaultLogo.classList.add('d-none');
+            };
+        });
+    </script>
+
     @stack('scripts')
 </body>
 </html>
