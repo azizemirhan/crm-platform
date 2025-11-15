@@ -266,24 +266,64 @@
                             Hızlı İşlemler
                         </h6>
                         <div class="d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm">
+                            <a href="mailto:{{ $contact->email }}" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-envelope me-2"></i>
                                 E-posta Gönder
-                            </button>
-                            <button class="btn btn-outline-success btn-sm">
+                            </a>
+                            <a href="tel:{{ $contact->phone }}" class="btn btn-outline-success btn-sm">
                                 <i class="bi bi-telephone me-2"></i>
                                 Ara
-                            </button>
-                            <button class="btn btn-outline-info btn-sm">
+                            </a>
+                            <button class="btn btn-outline-info btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#meetingModal">
                                 <i class="bi bi-calendar-plus me-2"></i>
                                 Toplantı Planla
                             </button>
-                            <button class="btn btn-outline-warning btn-sm">
+                            <button class="btn btn-outline-warning btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#opportunityModal">
                                 <i class="bi bi-plus-circle me-2"></i>
                                 Fırsat Oluştur
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Meeting Modal --}}
+    <div class="modal fade" id="meetingModal" tabindex="-1" aria-labelledby="meetingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title" id="meetingModalLabel">
+                        <i class="bi bi-calendar-plus me-2"></i>
+                        Toplantı Planla
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @livewire('meetings.meeting-form', ['contactId' => $contact->id])
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Opportunity Modal --}}
+    <div class="modal fade" id="opportunityModal" tabindex="-1" aria-labelledby="opportunityModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-warning text-white">
+                    <h5 class="modal-title" id="opportunityModalLabel">
+                        <i class="bi bi-trophy me-2"></i>
+                        Fırsat Oluştur
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @livewire('opportunities.opportunity-form', ['contactId' => $contact->id])
                 </div>
             </div>
         </div>
@@ -338,6 +378,20 @@
     .badge-disqualified {
         background-color: #ffebee;
         color: #d32f2f;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
     }
     </style>
     @endpush
