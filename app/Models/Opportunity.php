@@ -10,6 +10,27 @@ class Opportunity extends Model
 {
     use HasFactory, SoftDeletes;
 
+    // Stage definitions
+    public static $stages = [
+        'qualification' => 'Değerlendirme',
+        'proposal' => 'Teklif',
+        'negotiation' => 'Müzakere',
+        'closed_won' => 'Kazanıldı',
+        'closed_lost' => 'Kaybedildi',
+    ];
+
+    // Source definitions
+    public static $sources = [
+        'web_form' => 'Web Formu',
+        'google_ads' => 'Google Ads',
+        'facebook_ads' => 'Facebook Ads',
+        'linkedin' => 'LinkedIn',
+        'referral' => 'Referans',
+        'cold_call' => 'Soğuk Arama',
+        'trade_show' => 'Fuar',
+        'other' => 'Diğer',
+    ];
+
     protected $fillable = [
         'name',
         'description',

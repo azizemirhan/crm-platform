@@ -128,6 +128,7 @@ class ContactForm extends Component
         $this->validate();
 
         $data = [
+            'team_id' => auth()->user()->current_team_id ?? 1,
             'account_id' => $this->account_id,
             'owner_id' => $this->owner_id ?: auth()->id(),
             'salutation' => $this->salutation,

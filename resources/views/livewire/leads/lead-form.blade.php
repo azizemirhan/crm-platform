@@ -160,11 +160,17 @@
                                     id="form_source"
                                     wire:model="source">
                                 <option value="">Seçiniz...</option>
-                                <option value="Web Formu">🌐 Web Formu</option>
-                                <option value="Referans">👥 Referans</option>
-                                <option value="Etkinlik">🎯 Etkinlik</option>
-                                <option value="Sosyal Medya">📱 Sosyal Medya</option>
-                                <option value="Diğer">📋 Diğer</option>
+                                <option value="web_form">🌐 Web Formu</option>
+                                <option value="google_ads">🎯 Google Ads</option>
+                                <option value="facebook_ads">📘 Facebook Ads</option>
+                                <option value="instagram_ads">📷 Instagram Ads</option>
+                                <option value="linkedin">💼 LinkedIn</option>
+                                <option value="referral">👥 Referans</option>
+                                <option value="cold_call">📞 Soğuk Arama</option>
+                                <option value="trade_show">🎪 Fuar</option>
+                                <option value="webinar">🎥 Webinar</option>
+                                <option value="content_download">📄 İçerik İndirme</option>
+                                <option value="other">📋 Diğer</option>
                             </select>
                             @error('source')
                                 <div class="invalid-feedback d-block">
