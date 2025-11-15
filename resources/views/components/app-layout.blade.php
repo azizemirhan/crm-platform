@@ -78,7 +78,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('contacts.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('contacts.*') ? 'active' : '' }}" href="{{ route('contacts.index') }}">
                         <i class="bi bi-people"></i> Contacts
                     </a>
                 </li>

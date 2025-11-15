@@ -1,369 +1,405 @@
-<div>
-    <form wire:submit="save" class="space-y-8">
-        {{-- Basic Information --}}
-        <div class="bg-white shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
-                    Temel Bilgiler
-                </h3>
+<div class="contact-form-container">
+    <form wire:submit="save" class="modern-form">
+        <div class="card modern-card">
+            <div class="card-header bg-gradient-primary text-white border-0">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-{{ $isEditMode ? 'pencil-square' : 'person-plus' }} fs-4 me-2"></i>
+                    <h5 class="mb-0 fw-bold">{{ $isEditMode ? 'Kişi Düzenle' : 'Yeni Kişi Oluştur' }}</h5>
+                </div>
+            </div>
 
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-6">
-                    {{-- Salutation --}}
-                    <div class="sm:col-span-1">
-                        <label for="salutation" class="block text-sm font-medium text-gray-700">
-                            Ünvan
-                        </label>
-                        <select 
-                            id="salutation"
-                            wire:model="salutation"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                        >
-                            <option value="">Seçiniz</option>
-                            <option value="Mr">Bay</option>
-                            <option value="Mrs">Bayan</option>
-                            <option value="Ms">Bn.</option>
-                            <option value="Dr">Dr.</option>
-                            <option value="Prof">Prof.</option>
-                        </select>
-                        @error('salutation') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            <div class="card-body p-4">
+                {{-- Basic Information Section --}}
+                <div class="form-section mb-4">
+                    <h6 class="section-title mb-3">
+                        <i class="bi bi-person-circle text-primary me-2"></i>
+                        Temel Bilgiler
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label for="salutation" class="form-label fw-semibold">Ünvan</label>
+                            <select class="form-select form-select-modern @error('salutation') is-invalid @enderror"
+                                    id="salutation"
+                                    wire:model="salutation">
+                                <option value="">Seçiniz</option>
+                                <option value="Mr">Bay</option>
+                                <option value="Mrs">Bayan</option>
+                                <option value="Ms">Bn.</option>
+                                <option value="Dr">Dr.</option>
+                                <option value="Prof">Prof.</option>
+                            </select>
+                            @error('salutation')
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-5">
+                            <label for="first_name" class="form-label fw-semibold">
+                                İsim <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-person input-icon"></i>
+                                <input type="text"
+                                       class="form-control form-control-modern @error('first_name') is-invalid @enderror"
+                                       id="first_name"
+                                       placeholder="İsim"
+                                       wire:model="first_name"
+                                       required>
+                                @error('first_name')
+                                    <div class="invalid-feedback d-block">
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="last_name" class="form-label fw-semibold">
+                                Soyisim <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-person input-icon"></i>
+                                <input type="text"
+                                       class="form-control form-control-modern @error('last_name') is-invalid @enderror"
+                                       id="last_name"
+                                       placeholder="Soyisim"
+                                       wire:model="last_name"
+                                       required>
+                                @error('last_name')
+                                    <div class="invalid-feedback d-block">
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    {{-- First Name --}}
-                    <div class="sm:col-span-2">
-                        <label for="first_name" class="block text-sm font-medium text-gray-700">
-                            İsim <span class="text-red-500">*</span>
-                        </label>
-                        <input 
-                            type="text" 
-                            id="first_name"
-                            wire:model="first_name"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            required
-                        >
-                        @error('first_name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                {{-- Contact Information Section --}}
+                <div class="form-section mb-4">
+                    <h6 class="section-title mb-3">
+                        <i class="bi bi-telephone text-primary me-2"></i>
+                        İletişim Bilgileri
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label fw-semibold">
+                                E-posta <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-envelope input-icon"></i>
+                                <input type="email"
+                                       class="form-control form-control-modern @error('email') is-invalid @enderror"
+                                       id="email"
+                                       placeholder="ornek@email.com"
+                                       wire:model="email"
+                                       required>
+                                @error('email')
+                                    <div class="invalid-feedback d-block">
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label fw-semibold">Telefon</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-telephone input-icon"></i>
+                                <input type="tel"
+                                       class="form-control form-control-modern @error('phone') is-invalid @enderror"
+                                       id="phone"
+                                       placeholder="+90 (5XX) XXX XX XX"
+                                       wire:model="phone">
+                                @error('phone')
+                                    <div class="invalid-feedback d-block">
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="mobile" class="form-label fw-semibold">Mobil Telefon</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-phone input-icon"></i>
+                                <input type="tel"
+                                       class="form-control form-control-modern"
+                                       id="mobile"
+                                       placeholder="+90 (5XX) XXX XX XX"
+                                       wire:model="mobile">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="secondary_email" class="form-label fw-semibold">İkinci E-posta</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-envelope-plus input-icon"></i>
+                                <input type="email"
+                                       class="form-control form-control-modern"
+                                       id="secondary_email"
+                                       placeholder="ikinci@email.com"
+                                       wire:model="secondary_email">
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    {{-- Last Name --}}
-                    <div class="sm:col-span-3">
-                        <label for="last_name" class="block text-sm font-medium text-gray-700">
-                            Soyisim <span class="text-red-500">*</span>
-                        </label>
-                        <input 
-                            type="text" 
-                            id="last_name"
-                            wire:model="last_name"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            required
-                        >
-                        @error('last_name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                {{-- Professional Information Section --}}
+                <div class="form-section mb-4">
+                    <h6 class="section-title mb-3">
+                        <i class="bi bi-briefcase text-primary me-2"></i>
+                        Profesyonel Bilgiler
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="title" class="form-label fw-semibold">İş Ünvanı</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-person-badge input-icon"></i>
+                                <input type="text"
+                                       class="form-control form-control-modern"
+                                       id="title"
+                                       placeholder="Ör: Satış Müdürü"
+                                       wire:model="title">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="department" class="form-label fw-semibold">Departman</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-diagram-3 input-icon"></i>
+                                <input type="text"
+                                       class="form-control form-control-modern"
+                                       id="department"
+                                       placeholder="Ör: Satış"
+                                       wire:model="department">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="account_id" class="form-label fw-semibold">Şirket</label>
+                            <select class="form-select form-select-modern @error('account_id') is-invalid @enderror"
+                                    id="account_id"
+                                    wire:model="account_id">
+                                <option value="">Seçiniz</option>
+                                @foreach($accounts as $account)
+                                    <option value="{{ $account->id }}">{{ $account->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('account_id')
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="owner_id" class="form-label fw-semibold">Sahip</label>
+                            <select class="form-select form-select-modern @error('owner_id') is-invalid @enderror"
+                                    id="owner_id"
+                                    wire:model="owner_id">
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('owner_id')
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
+                        </div>
                     </div>
+                </div>
 
-                    {{-- Email --}}
-                    <div class="sm:col-span-3">
-                        <label for="email" class="block text-sm font-medium text-gray-700">
-                            E-posta <span class="text-red-500">*</span>
-                        </label>
-                        <input 
-                            type="email" 
-                            id="email"
-                            wire:model="email"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            required
-                        >
-                        @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+                {{-- Additional Information (Collapsible) --}}
+                <div class="form-section mb-4">
+                    <button type="button"
+                            wire:click="$toggle('showAdvanced')"
+                            class="btn btn-link text-decoration-none p-0 mb-3 w-100 text-start">
+                        <h6 class="section-title mb-0 d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="bi bi-info-circle text-primary me-2"></i>
+                                Ek Bilgiler
+                            </span>
+                            <i class="bi bi-chevron-{{ $showAdvanced ? 'up' : 'down' }} text-muted"></i>
+                        </h6>
+                    </button>
 
-                    {{-- Phone --}}
-                    <div class="sm:col-span-3">
-                        <label for="phone" class="block text-sm font-medium text-gray-700">
-                            Telefon
-                        </label>
-                        <input 
-                            type="tel" 
-                            id="phone"
-                            wire:model="phone"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                        >
-                        @error('phone') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+                    @if($showAdvanced)
+                        <div class="row g-3 animate-fade-in">
+                            <div class="col-md-4">
+                                <label for="status" class="form-label fw-semibold">Durum</label>
+                                <select class="form-select form-select-modern"
+                                        id="status"
+                                        wire:model="status">
+                                    <option value="active">✅ Aktif</option>
+                                    <option value="inactive">⏸️ Pasif</option>
+                                    <option value="disqualified">❌ Niteliksiz</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="lead_source" class="form-label fw-semibold">Kaynak</label>
+                                <select class="form-select form-select-modern"
+                                        id="lead_source"
+                                        wire:model="lead_source">
+                                    <option value="">Seçiniz</option>
+                                    <option value="web_form">🌐 Web Formu</option>
+                                    <option value="google_ads">🎯 Google Ads</option>
+                                    <option value="facebook_ads">📘 Facebook Ads</option>
+                                    <option value="linkedin">💼 LinkedIn</option>
+                                    <option value="referral">👥 Referans</option>
+                                    <option value="cold_call">📞 Soğuk Arama</option>
+                                    <option value="trade_show">🎪 Fuar</option>
+                                    <option value="other">📋 Diğer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="birthdate" class="form-label fw-semibold">Doğum Tarihi</label>
+                                <input type="date"
+                                       class="form-control form-control-modern"
+                                       id="birthdate"
+                                       wire:model="birthdate">
+                            </div>
+                            <div class="col-md-12">
+                                <label for="linkedin_url" class="form-label fw-semibold">LinkedIn Profili</label>
+                                <div class="input-with-icon">
+                                    <i class="bi bi-linkedin input-icon"></i>
+                                    <input type="url"
+                                           class="form-control form-control-modern"
+                                           id="linkedin_url"
+                                           placeholder="https://linkedin.com/in/..."
+                                           wire:model="linkedin_url">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="description" class="form-label fw-semibold">Notlar</label>
+                                <textarea class="form-control form-control-modern"
+                                          id="description"
+                                          rows="3"
+                                          placeholder="Kişi hakkında notlar..."
+                                          wire:model="description"></textarea>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
 
-                    {{-- Account --}}
-                    <div class="sm:col-span-3">
-                        <label for="account_id" class="block text-sm font-medium text-gray-700">
-                            Şirket
-                        </label>
-                        <select 
-                            id="account_id"
-                            wire:model="account_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                        >
-                            <option value="">Seçiniz</option>
-                            @foreach($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('account_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Owner --}}
-                    <div class="sm:col-span-3">
-                        <label for="owner_id" class="block text-sm font-medium text-gray-700">
-                            Sahip
-                        </label>
-                        <select 
-                            id="owner_id"
-                            wire:model="owner_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                        >
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('owner_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Title --}}
-                    <div class="sm:col-span-3">
-                        <label for="title" class="block text-sm font-medium text-gray-700">
-                            İş Ünvanı
-                        </label>
-                        <input 
-                            type="text" 
-                            id="title"
-                            wire:model="title"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                        >
-                        @error('title') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Status --}}
-                    <div class="sm:col-span-3">
-                        <label for="status" class="block text-sm font-medium text-gray-700">
-                            Durum
-                        </label>
-                        <select 
-                            id="status"
-                            wire:model="status"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                        >
-                            <option value="active">Aktif</option>
-                            <option value="inactive">Pasif</option>
-                            <option value="disqualified">Niteliksiz</option>
-                        </select>
-                        @error('status') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+            <div class="card-footer bg-light border-0 p-4">
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ $isEditMode && isset($contact) ? route('contacts.show', $contact) : route('contacts.index') }}"
+                       class="btn btn-secondary btn-modern-secondary">
+                        <i class="bi bi-x-circle me-2"></i>
+                        İptal
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-modern-primary">
+                        <span wire:loading.remove wire:target="save">
+                            <i class="bi bi-check-circle me-2"></i>
+                            {{ $isEditMode ? 'Güncelle' : 'Kaydet' }}
+                        </span>
+                        <span wire:loading wire:target="save">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Kaydediliyor...
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
-
-        {{-- Advanced Information (Collapsible) --}}
-        <div class="bg-white shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <button 
-                    type="button"
-                    wire:click="toggleAdvanced"
-                    class="flex items-center justify-between w-full text-left"
-                >
-                    <h3 class="text-lg font-medium leading-6 text-gray-900">
-                        Detaylı Bilgiler
-                    </h3>
-                    <svg 
-                        class="h-5 w-5 text-gray-400 transition-transform {{ $showAdvanced ? 'rotate-180' : '' }}" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                    >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-
-                @if($showAdvanced)
-                    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-6">
-                        {{-- Mobile --}}
-                        <div class="sm:col-span-2">
-                            <label for="mobile" class="block text-sm font-medium text-gray-700">
-                                Mobil Telefon
-                            </label>
-                            <input 
-                                type="tel" 
-                                id="mobile"
-                                wire:model="mobile"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- WhatsApp --}}
-                        <div class="sm:col-span-2">
-                            <label for="whatsapp" class="block text-sm font-medium text-gray-700">
-                                WhatsApp
-                            </label>
-                            <input 
-                                type="tel" 
-                                id="whatsapp"
-                                wire:model="whatsapp"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- Secondary Email --}}
-                        <div class="sm:col-span-2">
-                            <label for="secondary_email" class="block text-sm font-medium text-gray-700">
-                                İkinci E-posta
-                            </label>
-                            <input 
-                                type="email" 
-                                id="secondary_email"
-                                wire:model="secondary_email"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- Department --}}
-                        <div class="sm:col-span-3">
-                            <label for="department" class="block text-sm font-medium text-gray-700">
-                                Departman
-                            </label>
-                            <input 
-                                type="text" 
-                                id="department"
-                                wire:model="department"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- Birthdate --}}
-                        <div class="sm:col-span-3">
-                            <label for="birthdate" class="block text-sm font-medium text-gray-700">
-                                Doğum Tarihi
-                            </label>
-                            <input 
-                                type="date" 
-                                id="birthdate"
-                                wire:model="birthdate"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- LinkedIn --}}
-                        <div class="sm:col-span-3">
-                            <label for="linkedin_url" class="block text-sm font-medium text-gray-700">
-                                LinkedIn Profili
-                            </label>
-                            <input 
-                                type="url" 
-                                id="linkedin_url"
-                                wire:model="linkedin_url"
-                                placeholder="https://linkedin.com/in/..."
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- Lead Source --}}
-                        <div class="sm:col-span-3">
-                            <label for="lead_source" class="block text-sm font-medium text-gray-700">
-                                Kaynak
-                            </label>
-                            <select 
-                                id="lead_source"
-                                wire:model="lead_source"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                                <option value="">Seçiniz</option>
-                                <option value="web_form">Web Formu</option>
-                                <option value="google_ads">Google Ads</option>
-                                <option value="facebook_ads">Facebook Ads</option>
-                                <option value="linkedin">LinkedIn</option>
-                                <option value="referral">Referans</option>
-                                <option value="cold_call">Soğuk Arama</option>
-                                <option value="trade_show">Fuar</option>
-                                <option value="other">Diğer</option>
-                            </select>
-                        </div>
-
-                        {{-- Address --}}
-                        <div class="sm:col-span-6">
-                            <h4 class="text-sm font-medium text-gray-900 mb-4">Adres Bilgileri</h4>
-                        </div>
-
-                        <div class="sm:col-span-6">
-                            <label for="mailing_street" class="block text-sm font-medium text-gray-700">
-                                Sokak/Cadde
-                            </label>
-                            <input 
-                                type="text" 
-                                id="mailing_street"
-                                wire:model="mailing_street"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label for="mailing_city" class="block text-sm font-medium text-gray-700">
-                                Şehir
-                            </label>
-                            <input 
-                                type="text" 
-                                id="mailing_city"
-                                wire:model="mailing_city"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label for="mailing_state" class="block text-sm font-medium text-gray-700">
-                                İlçe
-                            </label>
-                            <input 
-                                type="text" 
-                                id="mailing_state"
-                                wire:model="mailing_state"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <label for="mailing_postal_code" class="block text-sm font-medium text-gray-700">
-                                Posta Kodu
-                            </label>
-                            <input 
-                                type="text" 
-                                id="mailing_postal_code"
-                                wire:model="mailing_postal_code"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            >
-                        </div>
-
-                        {{-- Description --}}
-                        <div class="sm:col-span-6">
-                            <label for="description" class="block text-sm font-medium text-gray-700">
-                                Notlar
-                            </label>
-                            <textarea 
-                                id="description"
-                                wire:model="description"
-                                rows="4"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                            ></textarea>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        {{-- Form Actions --}}
-        <div class="flex justify-end space-x-3">
-            <a 
-                href="{{ $isEditMode ? route('contacts.show', $contact) : route('contacts.index') }}"
-                class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
-                İptal
-            </a>
-            <button 
-                type="submit"
-                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
-                {{ $isEditMode ? 'Güncelle' : 'Kaydet' }}
-            </button>
-        </div>
     </form>
 </div>
+
+@push('styles')
+<style>
+.contact-form-container {
+    animation: fadeIn 0.4s ease-in;
+}
+
+.modern-form {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.form-section {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.section-title {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 1rem;
+}
+
+.form-control-modern,
+.form-select-modern {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.form-control-modern:focus,
+.form-select-modern:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon .input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.input-with-icon .form-control {
+    padding-right: 40px;
+}
+
+.btn-modern-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.625rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-modern-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.btn-modern-secondary {
+    border-radius: 8px;
+    padding: 0.625rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-modern-secondary:hover {
+    transform: translateY(-2px);
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+@endpush
