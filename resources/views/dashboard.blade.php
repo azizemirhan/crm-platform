@@ -240,5 +240,84 @@
                 </div>
             </div>
         </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Lead Sources</h5>
+                </div>
+                <div class="card-body">
+                    {{-- Grafik burada oluşturulacak --}}
+                    <div style="height: 300px;">
+                        <canvas id="leadSourcesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </x-app-layout>
+{{-- Bu kodu dashboard.blade.php dosyasının en altına ekleyin --}}
+@push('scripts')
+<script>
+    // Sayfa yüklendiğinde çalış
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        // 1. PHP'den gelen $leadSources verisini JSON olarak al
+        const leadSourcesData = @json($leadSources);
+
+        // 2. Chart.js için veriyi hazırla
+        const labels = leadSourcesData.map(item => item.source || 'Unknown');
+        const data = leadSourcesData.map(item => item.count);
+
+        // 3. Renk paleti (isterseniz değiştirebilirsiniz)
+        const backgroundColors = [
+            '#0d6efd', '#6f42c1', '#d63384', '#fd7e14', '#198754',
+            '#20c997', '#ffc107', '#dc3545', '#6c757d'
+        ];
+
+        // 4. Grafiği çizeceğimiz canvas elementini al
+        const ctx = document.getElementById('leadSourcesChart').getContext('2d');
+
+        // 5. Yeni bir pasta grafik oluştur
+        new Chart(ctx, {
+            type: 'pie', // Grafik Tipi
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Lead Count',
+                    data: data,
+                    backgroundColor: backgroundColors.slice(0, data.length),
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top', // Etiketleri üstte göster
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    // Sayısal değeri göster
+                                    label += context.parsed;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush

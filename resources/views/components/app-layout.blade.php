@@ -72,7 +72,7 @@
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('leads.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('leads.*') ? 'active' : '' }}" href="{{ route('leads.index') }}">
                         <i class="bi bi-stars"></i> Leads
                     </a>
                 </li>
@@ -156,5 +156,6 @@
             {{ $slot }}
         </div>
     </main>
+    @stack('scripts')
 </body>
 </html>

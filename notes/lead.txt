@@ -1,0 +1,57 @@
+🎯 "Leads" (Müşteri Adayları) Modülü İçin Temel İşlemler
+Bir CRM'in bu modülünde, "potansiyel müşteriyi" alıp "gerçek müşteriye" dönüştürme süreci yönetilir.
+
+1. Temel CRUD İşlemleri (Oluştur, Oku, Güncelle, Sil)
+Sizin de "listelemek, eklemek" dediğiniz gibi, bunlar en temel işlevlerdir:
+
+Listeleme (Read): Tüm müşteri adaylarının (lead) olduğu bir ana tablo sayfası. Bu tabloda Ad Soyad, Şirket, Durum (status), Puan (score) ve Sahip (owner_id) gibi temel bilgiler olmalı.
+
+Filtreleme: Bu listede duruma (status), kaynağa (source) veya sahibine (owner_id) göre filtreleme yapabilmelisiniz.
+
+Ekleme (Create): Yeni bir müşteri adayı oluşturmak için bir form. (app/Models/Lead.php modelinizdeki first_name, last_name, email, phone, company, source gibi alanları doldurur).
+
+Detay Sayfası (Read): Bir müşteri adayının üzerine tıklandığında açılan, tüm bilgilerini gösteren detay sayfası.
+
+Düzenleme (Update): Müşteri adayının bilgilerini (örn. telefon, unvan) güncellemek için bir form.
+
+Silme (Delete): Müşteri adayını silme işlemi.
+
+2. Kritik CRM İşlevleri (Dönüşüm ve Yönetim)
+Bu özellikler, bu modülü basit bir "kişi listesinden" çıkarıp gerçek bir CRM aracına dönüştürür ve kodunuzda bunların temelleri mevcut:
+
+🥇 Müşteri Adayı Dönüştürme (Lead Conversion): Bu, modülün en önemli işlevidir. Lead.php modelinizde converted_at, converted_contact_id, converted_account_id alanları tam olarak bu iş içindir.
+
+İşlev: Kullanıcı, "nitelikli" (qualified) olarak belirlediği bir "Lead"i "Dönüştür" (Convert) butonuna basar.
+
+Sonuç: Bu işlem otomatik olarak:
+
+Bir Kişi (Contact) oluşturur.
+
+Bir Hesap (Account) (şirket) oluşturur.
+
+(İsteğe bağlı) Bir Fırsat (Opportunity) oluşturur.
+
+Mevcut "Lead" kaydını "Dönüştürüldü" (Converted) olarak işaretler.
+
+Durum Yönetimi (Status Management): DashboardController.php dosyanızda da kullandığınız gibi ( 'new', 'contacted', 'qualified' ), bir müşteri adayının hangi aşamada olduğunu yönetmelisiniz.
+
+İşlev: Kullanıcı, bir müşteri adayının durumunu (örn. "Yeni" -> "İletişime Geçildi") kolayca değiştirebilmelidir. Bu, genellikle bir "dropdown" menü ile yapılır.
+
+Atama (Ownership): owner_id alanı bu iş içindir.
+
+İşlev: Bir müşteri adayını belirli bir satış temsilcisine (User) atayabilmelisiniz.
+
+3. İlişkili İşlemler (Aktiviteler ve Notlar)
+Müşteri adayı detay sayfasında mutlaka olması gereken yan modüller:
+
+Aktivite Kaydı (Activity Logging): Lead.php modelinizdeki activities() ilişkisi bunu sağlar.
+
+İşlev: Müşteri adayıyla ilgili yapılan aramaları, gönderilen e-postaları veya toplantıları kaydetme.
+
+Görev Ekleme (Task Management): Lead.php modelinizdeki tasks() ilişkisi bunu sağlar.
+
+İşlev: Bu müşteri adayıyla ilgili gelecekte yapılacak bir işi (örn. "Yarın tekrar ara") görev olarak ekleyebilme.
+
+Not Ekleme (Notes): Lead.php modelinizdeki notes() ilişkisi bunu sağlar.
+
+İşlev: Müşteri adayıyla ilgili genel notlar alabilme.

@@ -10,7 +10,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
-
+use App\Livewire\Leads\LeadList;
 /*
 |--------------------------------------------------------------------------
 | Guest Routes
