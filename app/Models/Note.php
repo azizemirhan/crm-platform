@@ -2,16 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTeam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Note extends Model
 {
-    use HasFactory, SoftDeletes, BelongsToTeam;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'team_id',
@@ -29,28 +26,18 @@ class Note extends Model
         'is_pinned' => 'boolean',
     ];
 
-    // Relationships
-    public function user(): BelongsTo
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function notable(): MorphTo
+    public function notable()
     {
         return $this->morphTo();
-    }
-
-    // Scopes
-    public function scopePinned($query)
-    {
-        return $query->where('is_pinned', true);
-    }
-
-    public function scopeVisible($query, User $user)
-    {
-        return $query->where(function($q) use ($user) {
-            $q->where('is_private', false)
-              ->orWhere('user_id', $user->id);
-        });
     }
 }

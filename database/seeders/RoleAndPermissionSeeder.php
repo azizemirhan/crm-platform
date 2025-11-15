@@ -15,179 +15,138 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create permissions
         $permissions = [
-            // Contacts
-            'contacts.view',
-            'contacts.view_all',
-            'contacts.create',
-            'contacts.edit',
-            'contacts.delete',
-            'contacts.export',
-            'contacts.import',
+            // Contact permissions
+            'view_contacts',
+            'create_contacts',
+            'edit_contacts',
+            'delete_contacts',
+            'export_contacts',
+            'import_contacts',
             
-            // Accounts
-            'accounts.view',
-            'accounts.view_all',
-            'accounts.create',
-            'accounts.edit',
-            'accounts.delete',
+            // Account permissions
+            'view_accounts',
+            'create_accounts',
+            'edit_accounts',
+            'delete_accounts',
+            'export_accounts',
             
-            // Leads
-            'leads.view',
-            'leads.view_all',
-            'leads.create',
-            'leads.edit',
-            'leads.delete',
-            'leads.convert',
+            // Lead permissions
+            'view_leads',
+            'create_leads',
+            'edit_leads',
+            'delete_leads',
+            'convert_leads',
+            'export_leads',
+            'import_leads',
             
-            // Opportunities
-            'opportunities.view',
-            'opportunities.view_all',
-            'opportunities.create',
-            'opportunities.edit',
-            'opportunities.delete',
+            // Opportunity permissions
+            'view_opportunities',
+            'create_opportunities',
+            'edit_opportunities',
+            'delete_opportunities',
+            'export_opportunities',
             
-            // Activities
-            'activities.view',
-            'activities.view_all',
-            'activities.create',
-            'activities.edit',
-            'activities.delete',
+            // Activity permissions
+            'view_activities',
+            'create_activities',
+            'edit_activities',
+            'delete_activities',
             
-            // Tasks
-            'tasks.view',
-            'tasks.view_all',
-            'tasks.create',
-            'tasks.edit',
-            'tasks.delete',
-            'tasks.assign',
+            // Task permissions
+            'view_tasks',
+            'create_tasks',
+            'edit_tasks',
+            'delete_tasks',
             
-            // Reports
-            'reports.view',
-            'reports.view_all_teams',
-            'reports.export',
+            // Report permissions
+            'view_reports',
+            'create_reports',
+            'export_reports',
             
-            // Settings
-            'settings.view',
-            'settings.edit',
-            'settings.manage_users',
-            'settings.manage_roles',
-            'settings.manage_custom_fields',
-            'settings.manage_integrations',
-            'settings.manage_billing',
+            // Settings permissions
+            'manage_settings',
+            'manage_users',
+            'manage_teams',
+            'manage_integrations',
+            'manage_custom_fields',
             
-            // Marketing
-            'marketing.campaigns.view',
-            'marketing.campaigns.create',
-            'marketing.campaigns.edit',
-            'marketing.campaigns.delete',
-            'marketing.campaigns.send',
-            
-            // Lists
-            'lists.view',
-            'lists.create',
-            'lists.edit',
-            'lists.delete',
+            // Advanced permissions
+            'view_analytics',
+            'manage_webhooks',
+            'access_api',
         ];
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);
         }
 
-        // Create roles
-        $admin = Role::create(['name' => 'admin']);
-        $salesManager = Role::create(['name' => 'sales_manager']);
-        $salesRep = Role::create(['name' => 'sales_rep']);
-        $marketing = Role::create(['name' => 'marketing']);
-        $readonly = Role::create(['name' => 'readonly']);
+        // Create roles and assign permissions
+        
+        // Super Admin - has all permissions
+        $superAdmin = Role::create(['name' => 'Super Admin']);
+        $superAdmin->givePermissionTo(Permission::all());
 
-        // Admin - Full access
-        $admin->givePermissionTo(Permission::all());
+        // Admin - has most permissions
+        $admin = Role::create(['name' => 'Admin']);
+        $admin->givePermissionTo([
+            'view_contacts', 'create_contacts', 'edit_contacts', 'delete_contacts', 'export_contacts', 'import_contacts',
+            'view_accounts', 'create_accounts', 'edit_accounts', 'delete_accounts', 'export_accounts',
+            'view_leads', 'create_leads', 'edit_leads', 'delete_leads', 'convert_leads', 'export_leads', 'import_leads',
+            'view_opportunities', 'create_opportunities', 'edit_opportunities', 'delete_opportunities', 'export_opportunities',
+            'view_activities', 'create_activities', 'edit_activities', 'delete_activities',
+            'view_tasks', 'create_tasks', 'edit_tasks', 'delete_tasks',
+            'view_reports', 'create_reports', 'export_reports',
+            'manage_custom_fields',
+            'view_analytics',
+        ]);
 
-        // Sales Manager
+        // Sales Manager - can manage sales items
+        $salesManager = Role::create(['name' => 'Sales Manager']);
         $salesManager->givePermissionTo([
-            'contacts.view_all',
-            'contacts.create',
-            'contacts.edit',
-            'contacts.delete',
-            'contacts.export',
-            'accounts.view_all',
-            'accounts.create',
-            'accounts.edit',
-            'accounts.delete',
-            'leads.view_all',
-            'leads.create',
-            'leads.edit',
-            'leads.delete',
-            'leads.convert',
-            'opportunities.view_all',
-            'opportunities.create',
-            'opportunities.edit',
-            'opportunities.delete',
-            'activities.view_all',
-            'activities.create',
-            'activities.edit',
-            'activities.delete',
-            'tasks.view_all',
-            'tasks.create',
-            'tasks.edit',
-            'tasks.delete',
-            'tasks.assign',
-            'reports.view',
-            'reports.view_all_teams',
-            'reports.export',
+            'view_contacts', 'create_contacts', 'edit_contacts', 'export_contacts',
+            'view_accounts', 'create_accounts', 'edit_accounts', 'export_accounts',
+            'view_leads', 'create_leads', 'edit_leads', 'convert_leads', 'export_leads',
+            'view_opportunities', 'create_opportunities', 'edit_opportunities', 'export_opportunities',
+            'view_activities', 'create_activities', 'edit_activities',
+            'view_tasks', 'create_tasks', 'edit_tasks',
+            'view_reports', 'export_reports',
+            'view_analytics',
         ]);
 
-        // Sales Representative
+        // Sales Representative - basic sales permissions
+        $salesRep = Role::create(['name' => 'Sales Representative']);
         $salesRep->givePermissionTo([
-            'contacts.view',
-            'contacts.create',
-            'contacts.edit',
-            'accounts.view',
-            'accounts.create',
-            'accounts.edit',
-            'leads.view',
-            'leads.create',
-            'leads.edit',
-            'leads.convert',
-            'opportunities.view',
-            'opportunities.create',
-            'opportunities.edit',
-            'activities.view',
-            'activities.create',
-            'activities.edit',
-            'tasks.view',
-            'tasks.create',
-            'tasks.edit',
-            'reports.view',
+            'view_contacts', 'create_contacts', 'edit_contacts',
+            'view_accounts', 'create_accounts', 'edit_accounts',
+            'view_leads', 'create_leads', 'edit_leads', 'convert_leads',
+            'view_opportunities', 'create_opportunities', 'edit_opportunities',
+            'view_activities', 'create_activities', 'edit_activities',
+            'view_tasks', 'create_tasks', 'edit_tasks',
+            'view_reports',
         ]);
 
-        // Marketing
+        // Marketing - focused on leads and campaigns
+        $marketing = Role::create(['name' => 'Marketing']);
         $marketing->givePermissionTo([
-            'contacts.view_all',
-            'contacts.export',
-            'contacts.import',
-            'leads.view_all',
-            'leads.create',
-            'leads.edit',
-            'marketing.campaigns.view',
-            'marketing.campaigns.create',
-            'marketing.campaigns.edit',
-            'marketing.campaigns.send',
-            'lists.view',
-            'lists.create',
-            'lists.edit',
-            'reports.view',
+            'view_contacts', 'export_contacts',
+            'view_accounts',
+            'view_leads', 'create_leads', 'edit_leads', 'export_leads', 'import_leads',
+            'view_activities', 'create_activities',
+            'view_reports', 'create_reports',
         ]);
 
-        // Read-only
-        $readonly->givePermissionTo([
-            'contacts.view',
-            'accounts.view',
-            'leads.view',
-            'opportunities.view',
-            'activities.view',
-            'tasks.view',
-            'reports.view',
+        // Viewer - read-only access
+        $viewer = Role::create(['name' => 'Viewer']);
+        $viewer->givePermissionTo([
+            'view_contacts',
+            'view_accounts',
+            'view_leads',
+            'view_opportunities',
+            'view_activities',
+            'view_tasks',
+            'view_reports',
         ]);
+
+        $this->command->info('Roles and permissions created successfully!');
     }
 }

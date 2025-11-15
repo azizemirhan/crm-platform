@@ -14,17 +14,13 @@ return new class extends Migration
             
             $table->string('name');
             $table->string('slug');
-            $table->string('color')->default('#3b82f6'); // Hex color
+            $table->string('color')->default('#3b82f6');
             $table->text('description')->nullable();
-            
-            // Category (for grouping tags)
-            $table->string('category')->nullable(); // e.g., 'industry', 'product', 'status'
-            
+            $table->string('category')->nullable();
             $table->integer('usage_count')->default(0);
             
             $table->timestamps();
             
-            // Indexes
             $table->index('team_id');
             $table->unique(['team_id', 'slug']);
             $table->index('category');
@@ -33,13 +29,20 @@ return new class extends Migration
         Schema::create('taggables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
-            $table->morphs('taggable');
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete(); // Who added the tag
+            
+            // morphs() yerine manuel kolonlar - böylece index kontrolümüz olur
+            $table->string('taggable_type');
+            $table->unsignedBigInteger('taggable_id');
+            
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
             
-            // Indexes
-            $table->unique(['tag_id', 'taggable_id', 'taggable_type']);
-            $table->index(['taggable_type', 'taggable_id']);
+            // Önce unique index - bu hem index hem unique constraint
+            $table->unique(['tag_id', 'taggable_id', 'taggable_type'], 'taggables_unique');
+            
+            // Polymorphic lookup için ayrı index GEREKMIYOR çünkü unique index zaten bunu kapsıyor
+            // Ama performans için eklemek isterseniz:
+            $table->index(['taggable_type', 'taggable_id'], 'taggables_morph_index');
         });
     }
 

@@ -2,26 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTeam;
-use App\Traits\HasActivities;
-use App\Traits\HasOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class Account extends Model implements Auditable
+class Account extends Model
 {
-    use HasFactory, 
-        SoftDeletes, 
-        BelongsToTeam, 
-        HasOwner, 
-        HasActivities,
-        \OwenIt\Auditing\Auditable;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'team_id',
@@ -65,107 +52,59 @@ class Account extends Model implements Auditable
     ];
 
     protected $casts = [
-        'custom_fields' => 'array',
         'annual_revenue' => 'decimal:2',
-        'employee_count' => 'integer',
         'last_activity_at' => 'datetime',
+        'custom_fields' => 'array',
     ];
 
-    protected $appends = ['full_address'];
-
     // Relationships
-    public function parentAccount(): BelongsTo
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function parentAccount()
     {
         return $this->belongsTo(Account::class, 'parent_account_id');
     }
 
-    public function childAccounts(): HasMany
+    public function childAccounts()
     {
         return $this->hasMany(Account::class, 'parent_account_id');
     }
 
-    public function contacts(): HasMany
+    public function contacts()
     {
         return $this->hasMany(Contact::class);
     }
 
-    public function opportunities(): HasMany
+    public function opportunities()
     {
         return $this->hasMany(Opportunity::class);
     }
 
-    public function notes(): MorphMany
+    public function activities()
+    {
+        return $this->morphMany(Activity::class, 'subject');
+    }
+
+    public function tasks()
+    {
+        return $this->morphMany(Task::class, 'related_to');
+    }
+
+    public function notes()
     {
         return $this->morphMany(Note::class, 'notable');
     }
 
-    public function tags(): MorphToMany
+    public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable');
-    }
-
-    public function media(): MorphMany
-    {
-        return $this->morphMany(Media::class, 'mediable');
-    }
-
-    // Accessors
-    public function getFullAddressAttribute(): ?string
-    {
-        $parts = array_filter([
-            $this->billing_address_line1,
-            $this->billing_address_line2,
-            $this->billing_city,
-            $this->billing_state,
-            $this->billing_postal_code,
-            $this->billing_country,
-        ]);
-
-        return implode(', ', $parts) ?: null;
-    }
-
-    public function getDomainAttribute(): ?string
-    {
-        if ($this->website) {
-            $parsed = parse_url($this->website);
-            return $parsed['host'] ?? null;
-        }
-        return null;
-    }
-
-    // Scopes
-    public function scopeCustomers($query)
-    {
-        return $query->where('type', 'customer');
-    }
-
-    public function scopeProspects($query)
-    {
-        return $query->where('type', 'prospect');
-    }
-
-    public function scopeByIndustry($query, string $industry)
-    {
-        return $query->where('industry', $industry);
-    }
-
-    // Methods
-    public function getPrimaryContact(): ?Contact
-    {
-        return $this->contacts()->orderBy('created_at')->first();
-    }
-
-    public function getTotalRevenue(): float
-    {
-        return $this->opportunities()
-            ->where('stage', 'closed_won')
-            ->sum('amount');
-    }
-
-    public function getOpenOpportunitiesValue(): float
-    {
-        return $this->opportunities()
-            ->whereNotIn('stage', ['closed_won', 'closed_lost'])
-            ->sum('amount');
     }
 }

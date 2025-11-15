@@ -13,15 +13,14 @@ return new class extends Migration
             $table->foreignId('team_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             
-            // What was changed
-            $table->string('event'); // created, updated, deleted, restored
+            $table->string('event');
+            
+            // morphs() zaten index oluşturur
             $table->morphs('auditable');
             
-            // Changes
             $table->text('old_values')->nullable();
             $table->text('new_values')->nullable();
             
-            // Context
             $table->text('url')->nullable();
             $table->ipAddress('ip_address')->nullable();
             $table->string('user_agent')->nullable();
@@ -29,10 +28,10 @@ return new class extends Migration
             
             $table->timestamps();
             
-            // Indexes
             $table->index('team_id');
             $table->index('user_id');
-            $table->index(['auditable_type', 'auditable_id']);
+            // ❌ Bu satırı KALDIRDIK
+            // $table->index(['auditable_type', 'auditable_id']);
             $table->index('event');
             $table->index('created_at');
         });

@@ -13,24 +13,22 @@ return new class extends Migration
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             
-            // Polymorphic relationship
+            // morphs() zaten index oluşturur
             $table->morphs('notable');
             
-            // Note Content
             $table->string('title')->nullable();
             $table->text('content');
             
-            // Visibility
             $table->boolean('is_private')->default(false);
             $table->boolean('is_pinned')->default(false);
             
             $table->timestamps();
             $table->softDeletes();
             
-            // Indexes
             $table->index('team_id');
             $table->index('user_id');
-            $table->index(['notable_type', 'notable_id']);
+            // ❌ Bu satırı KALDIRDIK
+            // $table->index(['notable_type', 'notable_id']);
             $table->index('is_pinned');
             $table->fullText('content');
         });

@@ -11,7 +11,10 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            
+            // morphs() zaten index oluşturur, ayrıca eklemeye gerek yok
             $table->morphs('subject');
+            
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             
             $table->enum('type', ['call', 'email', 'meeting', 'note', 'sms', 'whatsapp', 'task_completed', 'opportunity_stage_change', 'lead_status_change', 'file_upload', 'quote_sent', 'contract_signed', 'system']);
@@ -62,9 +65,11 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             
+            // Indexes - morphs() zaten subject_type ve subject_id için index oluşturdu
             $table->index('team_id');
             $table->index('user_id');
-            $table->index(['subject_type', 'subject_id']);
+            // ❌ Bu satırı KALDIRDIK çünkü morphs() zaten oluşturdu
+            // $table->index(['subject_type', 'subject_id']);
             $table->index('type');
             $table->index('status');
             $table->index(['team_id', 'type']);
