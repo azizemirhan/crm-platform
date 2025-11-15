@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('middle_name')->nullable();
-            $table->string('full_name')->virtualAs("concat(first_name, ' ', last_name)");
+            $table->string('full_name')->storedAs("concat(first_name, ' ', last_name)");            
             
             // Contact Info
             $table->string('email')->nullable();
