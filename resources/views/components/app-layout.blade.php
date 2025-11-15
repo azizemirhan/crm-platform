@@ -7,6 +7,7 @@
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <script src="https://cdn.jsdelivr.net/gh/livewire/livewire@v3.x.x/dist/livewire.min.js" defer></script>
 </head>
 <body>
     <!-- Top Navbar -->
@@ -157,7 +158,6 @@
             {{ $slot }}
         </div>
     </main>
-    @livewireScripts
     @stack('scripts')
 </body>
 </html>
