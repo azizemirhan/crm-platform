@@ -10,23 +10,16 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
-            
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->string('logo')->nullable();
-            
-            // Subscription (SaaS için)
-            $table->string('plan')->default('free'); // free, starter, professional, enterprise
+            $table->string('plan')->default('free');
             $table->integer('max_users')->default(5);
             $table->integer('max_contacts')->default(1000);
             $table->timestamp('trial_ends_at')->nullable();
             $table->timestamp('subscribed_at')->nullable();
-            
-            // Settings
             $table->json('settings')->nullable();
-            
             $table->timestamps();
             $table->softDeletes();
             

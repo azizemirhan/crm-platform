@@ -14,7 +14,8 @@ RUN apk add --no-cache \
     icu-dev \
     autoconf \
     g++ \
-    make
+    make \
+    linux-headers
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -34,6 +35,9 @@ RUN pecl install redis && docker-php-ext-enable redis
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Install Node.js and npm
+RUN apk add --no-cache nodejs npm
+
 WORKDIR /var/www
 
 # Development stage
@@ -44,11 +48,9 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Copy PHP configuration
 COPY docker/php/local.ini /usr/local/etc/php/conf.d/local.ini
-COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www && \
-    chmod -R 755 /var/www/storage
+RUN chown -R www-data:www-data /var/www
 
 USER www-data
 
