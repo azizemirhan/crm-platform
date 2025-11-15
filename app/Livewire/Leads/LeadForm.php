@@ -87,15 +87,13 @@ class LeadForm extends Component
             // Güncelle
             $this->lead->update($validatedData);
             session()->flash('success', 'Müşteri adayı başarıyla güncellendi.');
+            return $this->redirect(route('leads.show', $this->lead), navigate: true);
         } else {
             // Yeni oluştur
-            // team_id'yi giriş yapan kullanıcıdan al
-            $validatedData['team_id'] = Auth::user()->currentTeam->id; 
-            Lead::create($validatedData);
+            $newLead = Lead::create($validatedData);
             session()->flash('success', 'Müşteri adayı başarıyla oluşturuldu.');
+            return $this->redirect(route('leads.show', $newLead), navigate: true);
         }
-
-        return $this->redirect(route('leads.show', $this->lead), navigate: true);
     }
 
     /**

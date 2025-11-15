@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,60 +9,38 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Opportunity extends Model
 {
     use HasFactory, SoftDeletes;
-    public static $stages = [
-        'new' => ['label' => 'New', 'color' => 'gray'],
-        'qualification' => ['label' => 'Qualification', 'color' => 'blue'],
-        'proposal' => ['label' => 'Proposal Sent', 'color' => 'purple'],
-        'negotiation' => ['label' => 'Negotiation', 'color' => 'orange'],
-        'closed_won' => ['label' => 'Closed Won', 'color' => 'green'],
-        'closed_lost' => ['label' => 'Closed Lost', 'color' => 'red'],
-    ];
+
     protected $fillable = [
-        'team_id',
-        'account_id',
-        'contact_id',
-        'owner_id',
-        'lead_id',
         'name',
+        'description',
         'amount',
         'currency',
-        'stage',
         'probability',
+        'stage',
+        'lead_source',
         'expected_close_date',
         'actual_close_date',
-        'type',
-        'lead_source',
-        'outcome',
-        'won_reason',
         'loss_reason',
-        'competitor_lost_to',
-        'cost_of_sale',
-        'recurring_revenue',
-        'billing_frequency',
-        'is_private',
-        'forecast_category',
-        'description',
+        'contact_id',
+        'account_id',
+        'lead_id',
+        'owner_id',
         'next_steps',
-        'custom_fields',
-        'last_activity_at',
-        'days_in_stage',
+        'sales_cycle_days',
+        'competitor',
+        'notes',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'cost_of_sale' => 'decimal:2',
-        'recurring_revenue' => 'decimal:2',
         'expected_close_date' => 'date',
         'actual_close_date' => 'date',
-        'is_private' => 'boolean',
-        'last_activity_at' => 'datetime',
-        'custom_fields' => 'array',
     ];
 
     // Relationships
-    public function team()
+    public function contact()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Contact::class);
     }
 
     public function account()
@@ -71,9 +48,9 @@ class Opportunity extends Model
         return $this->belongsTo(Account::class);
     }
 
-    public function contact()
+    public function lead()
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsTo(Lead::class);
     }
 
     public function owner()
@@ -81,30 +58,85 @@ class Opportunity extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function lead()
+    public function meetings()
     {
-        return $this->belongsTo(Lead::class);
+        return $this->hasMany(Meeting::class);
     }
 
-    public function activities()
+    // Scopes
+    public function scopeOpen($query)
     {
-        return $this->morphMany(Activity::class, 'subject');
+        return $query->whereNotIn('stage', ['closed_won', 'closed_lost']);
     }
 
-    public function tasks()
+    public function scopeWon($query)
     {
-        return $this->morphMany(Task::class, 'related_to');
+        return $query->where('stage', 'closed_won');
     }
-    public function scopeOpen(Builder $query): Builder // <-- 2. BU FONKSİYONU EKLEYİN
+
+    public function scopeLost($query)
     {
-        return $query->whereNotIn('stage', [
-            'closed_won',
-            'closed_lost'
+        return $query->where('stage', 'closed_lost');
+    }
+
+    // Accessors
+    public function getWeightedAmountAttribute()
+    {
+        return $this->amount * ($this->probability / 100);
+    }
+
+    public function getStageColorAttribute()
+    {
+        return match($this->stage) {
+            'qualification' => 'info',
+            'proposal' => 'primary',
+            'negotiation' => 'warning',
+            'closed_won' => 'success',
+            'closed_lost' => 'danger',
+            default => 'secondary'
+        };
+    }
+
+    public function getIsWonAttribute()
+    {
+        return $this->stage === 'closed_won';
+    }
+
+    public function getIsLostAttribute()
+    {
+        return $this->stage === 'closed_lost';
+    }
+
+    public function getIsOpenAttribute()
+    {
+        return !in_array($this->stage, ['closed_won', 'closed_lost']);
+    }
+
+    // Methods
+    public function markAsWon()
+    {
+        $this->update([
+            'stage' => 'closed_won',
+            'actual_close_date' => now(),
+            'probability' => 100
         ]);
     }
 
-    public function notes()
+    public function markAsLost(string $reason = null)
     {
-        return $this->morphMany(Note::class, 'notable');
+        $this->update([
+            'stage' => 'closed_lost',
+            'actual_close_date' => now(),
+            'probability' => 0,
+            'loss_reason' => $reason
+        ]);
+    }
+
+    public function calculateSalesCycleDays()
+    {
+        if ($this->actual_close_date) {
+            $this->sales_cycle_days = $this->created_at->diffInDays($this->actual_close_date);
+            $this->save();
+        }
     }
 }

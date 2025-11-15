@@ -85,11 +85,11 @@ class ContactForm extends Component
         'email.unique' => 'Bu e-posta adresi zaten kullanılıyor.',
     ];
 
-    public function mount(?Contact $contact = null): void
+    public function mount(?int $contactId = null): void
     {
-        if ($contact && $contact->exists) {
+        if ($contactId) {
+            $this->contact = Contact::findOrFail($contactId);
             $this->isEditMode = true;
-            $this->contact = $contact;
             $this->fillForm();
         } else {
             $this->owner_id = auth()->id();
@@ -129,7 +129,7 @@ class ContactForm extends Component
 
         $data = [
             'account_id' => $this->account_id,
-            'owner_id' => $this->owner_id,
+            'owner_id' => $this->owner_id ?: auth()->id(),
             'salutation' => $this->salutation,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -155,16 +155,12 @@ class ContactForm extends Component
 
         if ($this->isEditMode) {
             $this->contact->update($data);
-            
+
             session()->flash('success', 'Kişi başarıyla güncellendi.');
             $this->redirect(route('contacts.show', $this->contact), navigate: true);
         } else {
             $contact = Contact::create($data);
-            
-            $contact->recordActivity('note', [
-                'description' => 'Kişi oluşturuldu',
-            ]);
-            
+
             session()->flash('success', 'Kişi başarıyla oluşturuldu.');
             $this->redirect(route('contacts.show', $contact), navigate: true);
         }
