@@ -1,0 +1,35 @@
+Branch Stratejisi
+
+# Main branches
+main         # Production-ready kod
+develop      # Development ortamı
+
+# Feature branches
+feature/faz1-core-setup
+feature/faz2-communication
+feature/faz3-marketing
+
+# Hotfix branches
+hotfix/critical-bug-fix
+
+# Release branches
+release/v1.0.0
+
+Coommit Convention
+
+# Commit mesaj formatı
+<type>(<scope>): <subject>
+
+# Types:
+feat:     Yeni özellik
+fix:      Bug düzeltme
+docs:     Dokümantasyon
+style:    Kod formatı
+refactor: Kod iyileştirme
+test:     Test ekleme
+chore:    Build/tool değişiklikleri
+
+# Örnekler:
+git commit -m "feat(contacts): add contact create functionality"
+git commit -m "fix(auth): resolve login redirect issue"
+git commit -m "docs(readme): update installation instructions"

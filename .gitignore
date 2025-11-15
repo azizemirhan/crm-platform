@@ -21,3 +21,35 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+
+# MacOS
+.DS_Store
+
+# Testing
+coverage/
+.phpunit.cache/
+
+# Laravel Specific
+storage/*.key
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log

@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('teams', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
+            
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->string('logo')->nullable();
+            
+            // Subscription (SaaS için)
+            $table->string('plan')->default('free'); // free, starter, professional, enterprise
+            $table->integer('max_users')->default(5);
+            $table->integer('max_contacts')->default(1000);
+            $table->timestamp('trial_ends_at')->nullable();
+            $table->timestamp('subscribed_at')->nullable();
+            
+            // Settings
+            $table->json('settings')->nullable();
+            
+            $table->timestamps();
+            $table->softDeletes();
+            
+            $table->index('slug');
+            $table->index('plan');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('teams');
+    }
+};

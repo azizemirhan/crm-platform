@@ -1,0 +1,21 @@
+# 1. Repository klonla
+git clone git@github.com:nextmedya/crm-platform.git
+cd crm-platform
+
+# 2. Environment ayarla
+cp .env.example .env
+# .env dosyasını düzenle (DB, Redis vs.)
+
+# 3. Docker başlat
+docker-compose up -d
+
+# 4. Kurulum scriptini çalıştır
+chmod +x scripts/setup.sh
+./scripts/setup.sh
+
+# 5. Test et
+make test
+
+# 6. Browser'da aç
+# http://localhost:8080
+# admin@crmplatform.test / password
