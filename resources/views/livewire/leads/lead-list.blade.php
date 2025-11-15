@@ -9,10 +9,10 @@
             <p class="text-muted mb-0">Tüm potansiyel müşterileri yönetin ve takip edin</p>
         </div>
         <div>
-            <button class="btn btn-primary btn-modern" wire:click="$dispatch('openModal', { component: 'leads.lead-form' })">
+            <a href="{{ route('leads.create') }}" class="btn btn-primary btn-modern" wire:navigate>
                 <i class="bi bi-plus-circle me-2"></i>
                 Yeni Müşteri Adayı
-            </button>
+            </a>
         </div>
     </div>
 
@@ -230,11 +230,12 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <button class="btn btn-outline-primary btn-sm-modern"
-                                                wire:click="$dispatch('openModal', { component: 'leads.lead-form', arguments: { leadId: {{ $lead->id }} }})"
-                                                data-bs-toggle="tooltip" title="Düzenle">
+                                        <a href="{{ route('leads.edit', $lead) }}"
+                                           class="btn btn-outline-primary btn-sm-modern"
+                                           wire:navigate
+                                           data-bs-toggle="tooltip" title="Düzenle">
                                             <i class="bi bi-pencil"></i>
-                                        </button>
+                                        </a>
                                         <button class="btn btn-outline-danger btn-sm-modern"
                                                 wire:click="deleteLead({{ $lead->id }})"
                                                 wire:confirm="Bu müşteri adayını silmek istediğinizden emin misiniz?"

@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 <body>
     <!-- Top Navbar -->
@@ -156,6 +157,7 @@
             {{ $slot }}
         </div>
     </main>
+    @livewireScripts
     @stack('scripts')
 </body>
 </html>

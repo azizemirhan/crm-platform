@@ -63,10 +63,19 @@ class LeadList extends Component
         // 3. Filtre dropdown'ı için tüm kullanıcıları al
         $users = User::orderBy('name')->get();
 
-        // 4. Verileri Blade dosyasına gönder
+        // 4. İstatistikleri hesapla
+        $stats = [
+            'total' => Lead::count(),
+            'qualified' => Lead::where('status', 'qualified')->count(),
+            'new' => Lead::where('status', 'new')->count(),
+            'converted' => Lead::where('status', 'converted')->count(),
+        ];
+
+        // 5. Verileri Blade dosyasına gönder
         return view('livewire.leads.lead-list', [
             'leads' => $leads,
-            'users' => $users, // <-- Hatanızı çözen kısım budur
+            'users' => $users,
+            'stats' => $stats,
         ]);
     }
 
