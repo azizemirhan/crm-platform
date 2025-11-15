@@ -62,8 +62,8 @@ class DashboardController extends Controller
                 ->where('stage', 'closed_won')
                 ->whereMonth('actual_close_date', now()->month)
                 ->sum('amount'),
-            'tasks_due_today' => Task::assignedTo($user)->dueToday()->count(),
-            'overdue_tasks' => Task::assignedTo($user)->overdue()->count(),
+            'tasks_due_today' => Task::where('assigned_to_id', $user->id)->dueToday()->count(),
+            'overdue_tasks' => Task::where('assigned_to_id', $user->id)->overdue()->count(),
         ];
     }
 
@@ -82,8 +82,8 @@ class DashboardController extends Controller
 
     private function getUpcomingTasks($user, int $limit = 10)
     {
-        return Task::with(['relatedTo', 'assignedTo'])
-            ->assignedTo($user)
+        return Task::with(['taskable', 'assignedUser']) // <-- 2. BURAYI DEĞİŞTİRİN
+            ->assignedTo($user) // Bu satır artık scopeAssignedTo'yu doğru çağıracak
             ->pending()
             ->whereNotNull('due_date')
             ->orderBy('due_date')

@@ -2,86 +2,60 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTeam;
+use App\Traits\HasActivities;
+use App\Traits\HasOwner;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User; // <-- 1. BU SATIRI EKLEYİN
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
+    use BelongsToTeam;
+    use HasOwner;
+    use HasActivities;
 
-    protected $fillable = [
-        'team_id',
-        'assigned_to_id',
-        'created_by_id',
-        'related_to_type',
-        'related_to_id',
-        'title',
-        'description',
-        'priority',
-        'status',
-        'due_date',
-        'start_date',
-        'reminder_at',
-        'reminder_sent',
-        'is_completed',
-        'completed_at',
-        'completed_by_id',
-        'is_recurring',
-        'recurrence_pattern',
-        'recurrence_interval',
-        'recurrence_days',
-        'recurrence_ends_at',
-        'parent_task_id',
-        'is_private',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'due_date' => 'datetime',
-        'start_date' => 'datetime',
-        'reminder_at' => 'datetime',
-        'completed_at' => 'datetime',
-        'recurrence_ends_at' => 'datetime',
-        'reminder_sent' => 'boolean',
-        'is_completed' => 'boolean',
-        'is_recurring' => 'boolean',
-        'is_private' => 'boolean',
-        'recurrence_days' => 'array',
     ];
 
-    // Relationships
-    public function team()
-    {
-        return $this->belongsTo(Team::class);
-    }
-
-    public function assignedTo()
-    {
-        return $this->belongsTo(User::class, 'assigned_to_id');
-    }
-
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by_id');
-    }
-
-    public function completedBy()
-    {
-        return $this->belongsTo(User::class, 'completed_by_id');
-    }
-
-    public function relatedTo()
+      public function taskable()
     {
         return $this->morphTo();
     }
 
-    public function parentTask()
+    // 2. 'scope' ÖNEKLERİNİ EKLEYİN (3 FONKSİYON)
+
+    public function scopeAssignedTo(Builder $query, User $user): Builder
     {
-        return $this->belongsTo(Task::class, 'parent_task_id');
+        return $query->where('assigned_to_id', $user->id);
     }
 
-    public function subTasks()
+    public function scopeDueToday(Builder $query): Builder
     {
-        return $this->hasMany(Task::class, 'parent_task_id');
+        return $query->whereDate('due_date', today());
     }
+
+    public function scopeOverdue(Builder $query): Builder
+    {
+        return $query->where('due_date', '<', today())
+                     ->where('status', '!=', 'completed');
+    }
+    public function scopePending(Builder $query): Builder // <-- BU FONKSİYONU EKLEYİN
+    {
+        return $query->where('status', '!=', 'completed');
+    }
+
+    public function assignedUser() // <-- 1. BU YENİ İLİŞKİYİ EKLEYİN
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
+    // app/Models/Task.php dosyanızda
+
 }

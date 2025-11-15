@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -110,6 +111,16 @@ class Contact extends Model
         return $this->morphMany(Note::class, 'notable');
     }
 
+    public function scopeActive(Builder $query): Builder // <-- 2. BU FONKSİYONU EKLEYİN
+    {
+        // "Aktif" tanımınız ne ise onu buraya yazın.
+        // Veritabanınızda 'status' adında bir sütun olduğunu varsayıyorum.
+        // Eğer 'is_active' gibi boolean bir sütunsa:
+        // return $query->where('is_active', true);
+
+        // 'status' sütunu 'active' olanları varsayıyorum:
+        return $query->where('status', 'active');
+    }
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable');

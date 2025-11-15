@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Opportunity extends Model
 {
     use HasFactory, SoftDeletes;
-
+    public static $stages = [
+        'new' => ['label' => 'New', 'color' => 'gray'],
+        'qualification' => ['label' => 'Qualification', 'color' => 'blue'],
+        'proposal' => ['label' => 'Proposal Sent', 'color' => 'purple'],
+        'negotiation' => ['label' => 'Negotiation', 'color' => 'orange'],
+        'closed_won' => ['label' => 'Closed Won', 'color' => 'green'],
+        'closed_lost' => ['label' => 'Closed Lost', 'color' => 'red'],
+    ];
     protected $fillable = [
         'team_id',
         'account_id',
@@ -86,6 +94,13 @@ class Opportunity extends Model
     public function tasks()
     {
         return $this->morphMany(Task::class, 'related_to');
+    }
+    public function scopeOpen(Builder $query): Builder // <-- 2. BU FONKSİYONU EKLEYİN
+    {
+        return $query->whereNotIn('stage', [
+            'closed_won',
+            'closed_lost'
+        ]);
     }
 
     public function notes()
