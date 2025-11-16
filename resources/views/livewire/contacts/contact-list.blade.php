@@ -1,331 +1,355 @@
-<div class="contact-list-wrapper">
-    {{-- Modern Header --}}
-    <div class="page-header-modern mb-4">
-        <div class="header-content">
-            <div class="header-left">
-                <div class="page-icon">
-                    <i class="bi bi-people-fill"></i>
-                </div>
+<div>
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="page-title">Kişiler</h1>
-                    <p class="page-subtitle">Tüm müşteri ve iş ortaklarınızı yönetin</p>
+                    <div class="text-sm text-gray-600 mb-1">Toplam Kişiler</div>
+                    <div class="text-2xl font-bold text-gray-900">{{ $stats['total'] ?? 0 }}</div>
+                </div>
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="bi bi-people-fill text-blue-600 text-xl"></i>
                 </div>
             </div>
-            <div class="header-right">
-                <a href="{{ route('contacts.create') }}" class="btn-create" wire:navigate>
-                    <i class="bi bi-plus-circle"></i>
-                    <span>Yeni Kişi Ekle</span>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-sm text-gray-600 mb-1">Bu Ay Eklenen</div>
+                    <div class="text-2xl font-bold text-green-600">{{ $stats['this_month'] ?? 0 }}</div>
+                </div>
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="bi bi-person-plus-fill text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-sm text-gray-600 mb-1">Şirket Bağlantılı</div>
+                    <div class="text-2xl font-bold text-yellow-600">{{ $stats['with_accounts'] ?? 0 }}</div>
+                </div>
+                <div class="p-3 bg-yellow-100 rounded-full">
+                    <i class="bi bi-building text-yellow-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="text-sm text-gray-600 mb-1">VIP Kişiler</div>
+                    <div class="text-2xl font-bold text-purple-600">{{ $stats['vip'] ?? 0 }}</div>
+                </div>
+                <div class="p-3 bg-purple-100 rounded-full">
+                    <i class="bi bi-star-fill text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <!-- Filters -->
+        <div class="p-6 border-b bg-gray-50">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="col-span-2">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="bi bi-search text-gray-400"></i>
+                        </div>
+                        <input type="text"
+                               wire:model.live.debounce.300ms="search"
+                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="İsim, e-posta veya telefon ara...">
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div>
+                    <select wire:model.live="filters.status"
+                            class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="active">Aktif</option>
+                        <option value="inactive">Pasif</option>
+                        <option value="potential">Potansiyel</option>
+                    </select>
+                </div>
+
+                <!-- Type Filter -->
+                <div>
+                    <select wire:model.live="filters.type"
+                            class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                        <option value="">Tüm Tipler</option>
+                        <option value="customer">Müşteri</option>
+                        <option value="prospect">Potansiyel</option>
+                        <option value="partner">Partner</option>
+                        <option value="supplier">Tedarikçi</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Advanced Filters Toggle -->
+            <div class="mt-4">
+                <button wire:click="$toggle('showAdvancedFilters')"
+                        class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                    <i class="bi {{ $showAdvancedFilters ? 'bi-chevron-up' : 'bi-chevron-down' }} mr-1"></i>
+                    {{ $showAdvancedFilters ? 'Gelişmiş Filtreleri Gizle' : 'Gelişmiş Filtreleri Göster' }}
+                </button>
+            </div>
+
+            <!-- Advanced Filters -->
+            @if($showAdvancedFilters)
+                <div class="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Source Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kaynak</label>
+                        <select wire:model.live="filters.source"
+                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                            <option value="">Tümü</option>
+                            <option value="website">Website</option>
+                            <option value="referral">Referans</option>
+                            <option value="social_media">Sosyal Medya</option>
+                            <option value="event">Etkinlik</option>
+                            <option value="other">Diğer</option>
+                        </select>
+                    </div>
+
+                    <!-- Industry Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sektör</label>
+                        <select wire:model.live="filters.industry"
+                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                            <option value="">Tümü</option>
+                            <option value="technology">Teknoloji</option>
+                            <option value="finance">Finans</option>
+                            <option value="healthcare">Sağlık</option>
+                            <option value="retail">Perakende</option>
+                            <option value="manufacturing">İmalat</option>
+                            <option value="other">Diğer</option>
+                        </select>
+                    </div>
+
+                    <!-- Owner Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sorumlu</label>
+                        <select wire:model.live="filters.owner_id"
+                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                            <option value="">Tümü</option>
+                            @foreach($users ?? [] as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reset Filters -->
+                <div class="mt-4">
+                    <button wire:click="resetFilters"
+                            class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
+                        <i class="bi bi-arrow-counterclockwise mr-1"></i>
+                        Filtreleri Sıfırla
+                    </button>
+                </div>
+            @endif
+        </div>
+
+        <!-- Table Header -->
+        <div class="px-6 py-4 bg-white border-b flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-700">
+                    <span class="font-medium">{{ $contacts->total() }}</span> kişi bulundu
+                </span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <!-- View Toggle -->
+                <div class="inline-flex rounded-lg shadow-sm" role="group">
+                    <button wire:click="$set('viewMode', 'grid')"
+                            class="px-4 py-2 text-sm font-medium {{ $viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50' }} border border-gray-200 rounded-l-lg">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                    </button>
+                    <button wire:click="$set('viewMode', 'list')"
+                            class="px-4 py-2 text-sm font-medium {{ $viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50' }} border border-gray-200 rounded-r-lg">
+                        <i class="bi bi-list-ul"></i>
+                    </button>
+                </div>
+
+                <!-- Create Button -->
+                <a href="{{ route('contacts.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <i class="bi bi-plus-circle mr-2"></i>
+                    Yeni Kişi
                 </a>
             </div>
         </div>
-    </div>
 
-    {{-- Modern Stats Cards --}}
-    <div class="stats-grid mb-4">
-        <div class="stat-card stat-primary">
-            <div class="stat-icon">
-                <i class="bi bi-people-fill"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value">{{ $stats['total'] ?? 0 }}</div>
-                <div class="stat-label">Toplam Kişi</div>
-            </div>
-            <div class="stat-trend up">
-                <i class="bi bi-arrow-up"></i> 15%
-            </div>
-        </div>
-
-        <div class="stat-card stat-success">
-            <div class="stat-icon">
-                <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value">{{ $stats['active'] ?? 0 }}</div>
-                <div class="stat-label">Aktif</div>
-            </div>
-            <div class="stat-trend up">
-                <i class="bi bi-arrow-up"></i> 10%
-            </div>
-        </div>
-
-        <div class="stat-card stat-warning">
-            <div class="stat-icon">
-                <i class="bi bi-building"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value">{{ $stats['with_accounts'] ?? 0 }}</div>
-                <div class="stat-label">Şirket Bağlantılı</div>
-            </div>
-            <div class="stat-trend">
-                <i class="bi bi-dash"></i> 0%
-            </div>
-        </div>
-
-        <div class="stat-card stat-info">
-            <div class="stat-icon">
-                <i class="bi bi-star-fill"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value">{{ $stats['vip'] ?? 0 }}</div>
-                <div class="stat-label">VIP Kişiler</div>
-            </div>
-            <div class="stat-trend up">
-                <i class="bi bi-arrow-up"></i> 5%
-            </div>
-        </div>
-    </div>
-
-    {{-- Modern Filters --}}
-    <div class="filters-card mb-4">
-        <div class="filters-header">
-            <h6 class="filters-title">
-                <i class="bi bi-funnel-fill"></i>
-                Filtreler
-            </h6>
-            <button class="btn-filter-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#contactFilters">
-                <i class="bi bi-chevron-down"></i>
-            </button>
-        </div>
-        <div class="collapse show" id="contactFilters">
-            <div class="filters-body">
-                <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="bi bi-search"></i> Ara
-                    </label>
-                    <input type="text"
-                           class="filter-input"
-                           placeholder="İsim, e-posta veya telefon..."
-                           wire:model.live.debounce.300ms="search">
-                </div>
-
-                <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="bi bi-tag"></i> Durum
-                    </label>
-                    <select class="filter-select" wire:model.live="filters.status">
-                        <option value="">Tümü</option>
-                        <option value="active">✅ Aktif</option>
-                        <option value="inactive">❌ Pasif</option>
-                        <option value="prospect">🎯 Potansiyel</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="bi bi-building"></i> Şirket
-                    </label>
-                    <select class="filter-select" wire:model.live="filters.account_id">
-                        <option value="">Tüm Şirketler</option>
-                        @foreach($accounts as $account)
-                            <option value="{{ $account->id }}">{{ $account->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label class="filter-label">
-                        <i class="bi bi-person-badge"></i> Sahip
-                    </label>
-                    <select class="filter-select" wire:model.live="filters.owner_id">
-                        <option value="">Tüm Sahipler</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modern Table --}}
-    <div class="data-table-card">
-        <div class="table-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>
-                            <div class="th-content">
-                                <i class="bi bi-person"></i>
-                                <span>Kişi</span>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="th-content">
-                                <i class="bi bi-building"></i>
-                                <span>Şirket</span>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="th-content">
-                                <i class="bi bi-briefcase"></i>
-                                <span>Unvan</span>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="th-content">
-                                <i class="bi bi-tag"></i>
-                                <span>Durum</span>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="th-content">
-                                <i class="bi bi-person-badge"></i>
-                                <span>Sahip</span>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="th-content">
-                                <i class="bi bi-envelope"></i>
-                                <span>İletişim</span>
-                            </div>
-                        </th>
-                        <th class="text-end">
-                            <div class="th-content justify-content-end">
-                                <i class="bi bi-gear"></i>
-                                <span>İşlemler</span>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr wire:loading class="loading-row">
-                        <td colspan="7">
-                            <div class="loading-state">
-                                <div class="spinner"></div>
-                                <p>Veriler yükleniyor...</p>
-                            </div>
-                        </td>
-                    </tr>
-
-                    @forelse($contacts as $contact)
-                        <tr wire:loading.remove class="data-row">
-                            <td>
-                                <div class="user-cell">
-                                    <div class="user-avatar">
-                                        {{ strtoupper(substr($contact->first_name, 0, 1)) }}{{ strtoupper(substr($contact->last_name, 0, 1)) }}
+        <!-- List View -->
+        @if($viewMode === 'list')
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" wire:click="sortBy('first_name')">
+                                <div class="flex items-center space-x-1">
+                                    <span>İsim</span>
+                                    @if($sortField === 'first_name')
+                                        <i class="bi bi-chevron-{{ $sortDirection === 'asc' ? 'up' : 'down' }}"></i>
+                                    @endif
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                İletişim
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Şirket
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Durum
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Sorumlu
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                İşlemler
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($contacts as $contact)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">
+                                                {{ strtoupper(substr($contact->first_name, 0, 1)) }}{{ strtoupper(substr($contact->last_name ?? '', 0, 1)) }}
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ $contact->first_name }} {{ $contact->last_name }}
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                {{ $contact->title }}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="user-info">
-                                        <a href="{{ route('contacts.show', $contact) }}" class="user-name">
-                                            {{ $contact->full_name }}
-                                        </a>
-                                        <span class="user-subtitle">{{ $contact->department ?? 'No Department' }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="company-cell">
-                                    <i class="bi bi-building company-icon"></i>
-                                    <span>{{ $contact->account->name ?? '-' }}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="text-muted">{{ $contact->title ?? '-' }}</span>
-                            </td>
-                            <td>
-                                <span class="status-badge status-{{ $contact->status ?? 'secondary' }}">
-                                    <span class="status-dot"></span>
-                                    {{ ucfirst($contact->status ?? 'N/A') }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="owner-cell">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($contact->owner->name ?? 'NA') }}&background=6366f1&color=fff&size=32"
-                                         alt="{{ $contact->owner->name ?? 'Atanmamış' }}"
-                                         class="owner-avatar">
-                                    <span>{{ $contact->owner->name ?? 'Atanmamış' }}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="contact-cell">
-                                    <div class="contact-item">
-                                        <i class="bi bi-envelope"></i>
-                                        <span>{{ $contact->email }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        <i class="bi bi-envelope text-gray-400 mr-2"></i>{{ $contact->email }}
                                     </div>
                                     @if($contact->phone)
-                                        <div class="contact-item">
-                                            <i class="bi bi-telephone"></i>
-                                            <span>{{ $contact->phone }}</span>
+                                        <div class="text-sm text-gray-500">
+                                            <i class="bi bi-telephone text-gray-400 mr-2"></i>{{ $contact->phone }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($contact->account)
+                                        <div class="text-sm text-gray-900">{{ $contact->account->name }}</div>
+                                    @else
+                                        <span class="text-sm text-gray-400">-</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ $contact->status === 'active' ? 'bg-green-100 text-green-800' : '' }}
+                                        {{ $contact->status === 'inactive' ? 'bg-gray-100 text-gray-800' : '' }}
+                                        {{ $contact->status === 'potential' ? 'bg-yellow-100 text-yellow-800' : '' }}">
+                                        {{ ucfirst($contact->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $contact->owner->name ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ route('contacts.show', $contact) }}" class="text-blue-600 hover:text-blue-900 mr-3">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{{ route('contacts.edit', $contact) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button wire:click="deleteContact({{ $contact->id }})" wire:confirm="Bu kişiyi silmek istediğinizden emin misiniz?" class="text-red-600 hover:text-red-900">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                    <i class="bi bi-inbox text-4xl mb-2"></i>
+                                    <p>Henüz kişi bulunmuyor.</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
+        <!-- Grid View -->
+        @if($viewMode === 'grid')
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    @forelse($contacts as $contact)
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="h-16 w-16 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-xl mb-3">
+                                    {{ strtoupper(substr($contact->first_name, 0, 1)) }}{{ strtoupper(substr($contact->last_name ?? '', 0, 1)) }}
+                                </div>
+
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    {{ $contact->first_name }} {{ $contact->last_name }}
+                                </h3>
+
+                                @if($contact->title)
+                                    <p class="text-sm text-gray-600 mb-2">{{ $contact->title }}</p>
+                                @endif
+
+                                @if($contact->account)
+                                    <p class="text-xs text-gray-500 mb-3">
+                                        <i class="bi bi-building mr-1"></i>{{ $contact->account->name }}
+                                    </p>
+                                @endif
+
+                                <div class="w-full space-y-1 mb-3">
+                                    <div class="text-xs text-gray-600 truncate">
+                                        <i class="bi bi-envelope mr-1"></i>{{ $contact->email }}
+                                    </div>
+                                    @if($contact->phone)
+                                        <div class="text-xs text-gray-600">
+                                            <i class="bi bi-telephone mr-1"></i>{{ $contact->phone }}
                                         </div>
                                     @endif
                                 </div>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="{{ route('contacts.show', $contact) }}" 
-                                       class="action-btn action-view"
-                                       data-bs-toggle="tooltip" title="Görüntüle">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ route('contacts.edit', $contact) }}" 
-                                       class="action-btn action-edit"
-                                       wire:navigate
-                                       data-bs-toggle="tooltip" title="Düzenle">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button class="action-btn action-delete"
-                                            wire:click="deleteContact({{ $contact->id }})"
-                                            wire:confirm="Bu kişiyi silmek istediğinizden emin misiniz?"
-                                            data-bs-toggle="tooltip" title="Sil">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr wire:loading.remove>
-                            <td colspan="7">
-                                <div class="empty-state">
-                                    <div class="empty-icon">
-                                        <i class="bi bi-people"></i>
-                                    </div>
-                                    <h5>Henüz kişi bulunmuyor</h5>
-                                    <p>Yeni bir kişi ekleyerek başlayın</p>
-                                    <a href="{{ route('contacts.create') }}" class="btn-create btn-create-sm" wire:navigate>
-                                        <i class="bi bi-plus-circle"></i>
-                                        <span>İlk Kişiyi Ekle</span>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
 
-        @if($contacts->hasPages())
-            <div class="table-footer">
-                <div class="pagination-info">
-                    Toplam {{ $contacts->total() }} kayıttan {{ $contacts->firstItem() }}-{{ $contacts->lastItem() }} arası gösteriliyor
-                </div>
-                <div class="pagination-wrapper">
-                    {{ $contacts->links() }}
+                                <div class="flex items-center justify-center space-x-2 w-full pt-3 border-t">
+                                    <a href="{{ route('contacts.show', $contact) }}" class="flex-1 text-center px-3 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded transition">
+                                        <i class="bi bi-eye"></i> Görüntüle
+                                    </a>
+                                    <a href="{{ route('contacts.edit', $contact) }}" class="flex-1 text-center px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 rounded transition">
+                                        <i class="bi bi-pencil"></i> Düzenle
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-12 text-gray-500">
+                            <i class="bi bi-inbox text-4xl mb-2"></i>
+                            <p>Henüz kişi bulunmuyor.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         @endif
+
+        <!-- Pagination -->
+        <div class="px-6 py-4 bg-gray-50 border-t">
+            {{ $contacts->links() }}
+        </div>
     </div>
 </div>
-
-@push('styles')
-<style>
-/* Contact List styles - Lead list ile aynı CSS'leri kullanıyor */
-.contact-list-wrapper {
-    animation: fadeIn 0.4s ease;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .page-header-modern {
-        padding: 1.5rem;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .page-icon {
-        display: none;
-    }
-}
-</style>
-@endpush

@@ -203,6 +203,15 @@ body {
     color: #94a3b8;
 }
 
+/* Sidebar Module Switching */
+.sidebar-module {
+    display: none;
+}
+
+.sidebar-module.active {
+    display: block;
+}
+
 .sidebar-secondary-nav {
     padding: 1rem 0;
 }
