@@ -26,9 +26,8 @@ return new class extends Migration
             $table->string('timezone')->default('Europe/Istanbul');
             $table->string('locale')->default('tr');
             $table->json('preferences')->nullable();
-
+            
             $table->boolean('is_active')->default(true);
-            $table->boolean('is_owner')->default(false);
             $table->timestamp('last_login_at')->nullable();
             $table->ipAddress('last_login_ip')->nullable();
             
@@ -42,7 +41,6 @@ return new class extends Migration
             
             $table->index('team_id');
             $table->index('is_active');
-            $table->index('is_owner');
             $table->index('created_at');
         });
 
