@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
+    
+    {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    {{-- Stack Styles --}}
+    @stack('styles')
 </head>
 <body>
     <!-- Primary Sidebar (Icons) -->
     <div class="sidebar-primary">
         <!-- Logo -->
         <div class="sidebar-primary-logo">
-            <!-- Buraya kendi logonuzu ekleyin -->
-            <img src="{{ asset('logo1.svg') }}" alt="Logo" class="d-none" id="custom-logo">
-            <!-- Varsayılan Icon -->
+            <img src="/logo1.svg" alt="Logo" class="d-none" id="custom-logo">
             <i class="bi bi-graph-up-arrow text-primary" id="default-logo" style="font-size: 2rem;"></i>
         </div>
 
@@ -79,23 +82,23 @@
             <div class="sidebar-secondary-section">
                 <div class="sidebar-secondary-section-title">CRM</div>
                 
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('leads.*') ? 'active' : '' }}">
+                <a href="{{ route('leads.index') }}" class="sidebar-secondary-item {{ request()->routeIs('leads.*') ? 'active' : '' }}">
                     <i class="bi bi-stars"></i>
                     <span>Leads</span>
                     <span class="badge bg-warning text-dark">12</span>
                 </a>
                 
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
+                <a href="#" class="sidebar-secondary-item">
                     <i class="bi bi-people"></i>
                     <span>Contacts</span>
                 </a>
                 
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('accounts.*') ? 'active' : '' }}">
+                <a href="#" class="sidebar-secondary-item">
                     <i class="bi bi-building"></i>
                     <span>Accounts</span>
                 </a>
                 
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('opportunities.*') ? 'active' : '' }}">
+                <a href="#" class="sidebar-secondary-item">
                     <i class="bi bi-trophy"></i>
                     <span>Opportunities</span>
                     <span class="badge bg-success">8</span>
@@ -168,12 +171,6 @@
 
         <!-- Right Side -->
         <div class="d-flex align-items-center gap-3">
-            <!-- Quick Actions -->
-            <button class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i>
-                <span class="d-none d-md-inline ms-1">Create</span>
-            </button>
-
             <!-- Search (Desktop) -->
             <div class="position-relative d-none d-lg-block" style="width: 300px;">
                 <i class="bi bi-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
@@ -188,55 +185,12 @@
                         3
                     </span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                    <li class="dropdown-header d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">Notifications</span>
-                        <a href="#" class="text-primary" style="font-size: 0.875rem;">Mark all read</a>
-                    </li>
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 320px;">
+                    <li class="dropdown-header">Notifications</li>
                     <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item py-3" href="#">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <i class="bi bi-person-plus text-success"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="mb-1 fw-medium" style="font-size: 0.875rem;">New lead assigned</p>
-                                    <small class="text-muted">John Doe assigned to you</small>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item py-3" href="#">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <i class="bi bi-check-circle text-info"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="mb-1 fw-medium" style="font-size: 0.875rem;">Task completed</p>
-                                    <small class="text-muted">Follow-up call completed</small>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item py-3" href="#">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <i class="bi bi-calendar-event text-warning"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="mb-1 fw-medium" style="font-size: 0.875rem;">Upcoming meeting</p>
-                                    <small class="text-muted">Meeting in 30 minutes</small>
-                                </div>
-                            </div>
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li class="text-center">
-                        <a href="#" class="dropdown-item text-primary fw-medium">View all notifications</a>
-                    </li>
+                    <li><a class="dropdown-item" href="#">New lead assigned</a></li>
+                    <li><a class="dropdown-item" href="#">Task deadline approaching</a></li>
+                    <li><a class="dropdown-item" href="#">Opportunity updated</a></li>
                 </ul>
             </div>
 
@@ -254,7 +208,6 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow">
                     <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
                     <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Settings</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i> Help</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
@@ -290,7 +243,9 @@
         {{ $slot }}
     </main>
 
-    <!-- JavaScript for Mobile Toggle -->
+    {{-- Stack Scripts --}}
+    @stack('scripts')
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sidebarToggle = document.getElementById('sidebarToggle');
@@ -302,20 +257,16 @@
                 });
             }
 
-            // Logo visibility control
             const customLogo = document.getElementById('custom-logo');
             const defaultLogo = document.getElementById('default-logo');
             
-            // Eğer /public/logo.svg dosyası varsa custom logoyu göster
             const img = new Image();
-            img.src = '/logo.svg';
+            img.src = '/logo1.svg';
             img.onload = function() {
                 customLogo.classList.remove('d-none');
                 defaultLogo.classList.add('d-none');
             };
         });
     </script>
-
-    @stack('scripts')
 </body>
 </html>
