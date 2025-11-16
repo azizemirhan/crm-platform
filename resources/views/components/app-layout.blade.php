@@ -621,6 +621,15 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <!-- Page Header (if provided) -->
+        @isset($header)
+            <div class="bg-white border-b border-gray-200 mb-6">
+                <div class="py-4">
+                    {{ $header }}
+                </div>
+            </div>
+        @endisset
+
         <!-- Flash Messages -->
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
