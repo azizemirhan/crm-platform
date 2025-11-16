@@ -181,6 +181,7 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
             {{-- Status and Assignment Section --}}
             <div class="form-section">
                 <div class="section-header">
@@ -199,6 +200,58 @@
                             <label class="form-label">
                                 Durum
                                 <span class="required">*</span>
+=======
+                {{-- Status and Source Section --}}
+                <div class="form-section mb-4">
+                    <h6 class="section-title mb-3">
+                        <i class="bi bi-gear text-primary me-2"></i>
+                        Durum ve Kaynak
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="form_status" class="form-label fw-semibold">Durum</label>
+                            <select class="form-select form-select-modern @error('status') is-invalid @enderror"
+                                    id="form_status"
+                                    wire:model="status">
+                                <option value="new">🆕 Yeni</option>
+                                <option value="contacted">📞 İletişime Geçildi</option>
+                                <option value="qualified">✅ Nitelikli</option>
+                                <option value="lost">❌ Kaybedildi</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="form_source" class="form-label fw-semibold">Kaynak</label>
+                            <select class="form-select form-select-modern @error('source') is-invalid @enderror"
+                                    id="form_source"
+                                    wire:model="source">
+                                <option value="">Seçiniz...</option>
+                                <option value="web_form">🌐 Web Formu</option>
+                                <option value="google_ads">🎯 Google Ads</option>
+                                <option value="facebook_ads">📘 Facebook Ads</option>
+                                <option value="instagram_ads">📷 Instagram Ads</option>
+                                <option value="linkedin">💼 LinkedIn</option>
+                                <option value="referral">👥 Referans</option>
+                                <option value="cold_call">📞 Soğuk Arama</option>
+                                <option value="trade_show">🎪 Fuar</option>
+                                <option value="webinar">🎥 Webinar</option>
+                                <option value="content_download">📄 İçerik İndirme</option>
+                                <option value="other">📋 Diğer</option>
+                            </select>
+                            @error('source')
+                                <div class="invalid-feedback d-block">
+                                    <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="owner_id" class="form-label fw-semibold">
+                                Sahip <span class="text-danger">*</span>
+>>>>>>> claude/lead-contact-blade-setup-011grna4xFntttFLudh7ViEa
                             </label>
                             <div class="select-wrapper">
                                 <span class="select-icon">
