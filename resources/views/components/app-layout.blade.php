@@ -91,17 +91,6 @@
                     <span>Leads</span>
                     <span class="badge bg-warning text-dark">12</span>
                 </a>
-                
-                <a href="#" class="sidebar-secondary-item">
-                    <i class="bi bi-people"></i>
-                    <span>Contacts</span>
-                </a>
-                
-                <a href="#" class="sidebar-secondary-item">
-                    <i class="bi bi-building"></i>
-                    <span>Accounts</span>
-                </a>
-                
                 <a href="#" class="sidebar-secondary-item">
 
                 <a href="{{ route('contacts.index') }}" class="sidebar-secondary-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
