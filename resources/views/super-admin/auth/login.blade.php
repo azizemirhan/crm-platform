@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="text-center text-sm">
-                    <a href="{{ route('home') }}" class="font-medium text-gray-400 hover:text-gray-300">
+                    <a href="/" class="font-medium text-gray-400 hover:text-gray-300">
                         ← Back to home
                     </a>
                 </div>
