@@ -41,11 +41,15 @@ cache-clear: ## Tüm cache'leri temizle
 	docker-compose exec app php artisan config:clear
 	docker-compose exec app php artisan route:clear
 	docker-compose exec app php artisan view:clear
+	docker-compose exec app php artisan event:clear
 
 composer-dump: ## Composer autoloader'ı yenile
 	docker-compose exec app composer dump-autoload -o
 
-fix-autoload: composer-dump cache-clear ## Autoloader ve cache sorunlarını düzelt
+bootstrap-clear: ## Bootstrap cache'i temizle
+	docker-compose exec app rm -f bootstrap/cache/*.php
+
+fix-autoload: composer-dump cache-clear bootstrap-clear ## Autoloader ve cache sorunlarını düzelt
 	@echo "✅ Autoloader ve cache temizlendi!"
 
 queue-work: ## Queue worker başlat

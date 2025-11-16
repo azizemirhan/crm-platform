@@ -13,12 +13,20 @@ fi
 echo "✅ Autoloader refreshed"
 echo ""
 
-# Step 2: Clear Laravel caches
-echo "2️⃣ Clearing Laravel caches..."
+# Step 2: Clear all Laravel caches
+echo "2️⃣ Clearing all Laravel caches..."
 docker-compose exec app php artisan config:clear
 docker-compose exec app php artisan cache:clear
 docker-compose exec app php artisan route:clear
-echo "✅ Caches cleared"
+docker-compose exec app php artisan view:clear
+docker-compose exec app php artisan event:clear
+echo "✅ All caches cleared"
+echo ""
+
+# Step 2.5: Clear bootstrap cache
+echo "2.5️⃣ Clearing bootstrap cache..."
+docker-compose exec app rm -f bootstrap/cache/*.php
+echo "✅ Bootstrap cache cleared"
 echo ""
 
 # Step 3: Run tenant migrations (if not already run)
