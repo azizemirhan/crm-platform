@@ -6,13 +6,12 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the central database (NOT tenant databases)
+     */
     public function run(): void
     {
-        $this->call([
-            RoleAndPermissionSeeder::class,
-            TeamSeeder::class,
-            UserSeeder::class,
-            SampleDataSeeder::class, // Only for development
-        ]);
+        // Only seed central/super-admin data here
+        // Tenant-specific seeding happens via DemoTenantSeeder or tenants:seed command
     }
 }

@@ -81,7 +81,7 @@ tenant-migrate-rollback: ## Tenant migration'larını geri al
 	docker-compose exec app php artisan tenants:rollback
 
 tenant-seed: ## Tenant seed data ekle
-	docker-compose exec app php artisan tenants:seed
+	docker-compose exec app php artisan tenants:seed --class=TenantDatabaseSeeder
 
 tenant-list: ## Tenant'ları listele
 	@docker-compose exec app php artisan tinker --execute="App\Models\Tenant::select(['id','name','email','plan','status'])->get()->each(function(\$$t){ echo \$$t->id . ' - ' . \$$t->name . ' (' . \$$t->plan . ') - ' . \$$t->status . PHP_EOL; })"
