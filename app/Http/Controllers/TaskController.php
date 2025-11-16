@@ -44,7 +44,10 @@ class TaskController extends Controller
             $query->where('priority', $request->priority);
         }
 
-        $tasks = $query->orderBy('order')->get();
+        // Order by 'order' column if exists, otherwise use 'id'
+        $tasks = \Schema::hasColumn('tasks', 'order')
+            ? $query->orderBy('order')->get()
+            : $query->orderBy('id')->get();
 
         // Group tasks by status
         $tasksByStatus = [
@@ -79,7 +82,11 @@ class TaskController extends Controller
 
         $validated['team_id'] = auth()->user()->current_team_id ?? 1;
         $validated['created_by_id'] = auth()->id();
-        $validated['order'] = Task::where('status', $validated['status'])->max('order') + 1;
+
+        // Only set order if column exists
+        if (\Schema::hasColumn('tasks', 'order')) {
+            $validated['order'] = Task::where('status', $validated['status'])->max('order') + 1;
+        }
 
         $task = Task::create($validated);
 
@@ -118,10 +125,16 @@ class TaskController extends Controller
 
     public function updateStatus(Request $request, Task $task)
     {
-        $validated = $request->validate([
+        $rules = [
             'status' => 'required|in:todo,in_progress,in_review,completed',
-            'order' => 'required|integer|min:0',
-        ]);
+        ];
+
+        // Only validate order if column exists
+        if (\Schema::hasColumn('tasks', 'order')) {
+            $rules['order'] = 'required|integer|min:0';
+        }
+
+        $validated = $request->validate($rules);
 
         $task->update($validated);
 
