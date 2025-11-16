@@ -54,7 +54,53 @@ class TenantController extends Controller
             'storage' => $tenant->current_storage_mb,
         ];
 
-        return view('super-admin.tenants.show', compact('tenant', 'usage'));
+        // Get Telescope entries for this tenant
+        $telescopeEntries = [];
+        if (class_exists('\Laravel\Telescope\EntryModel')) {
+            $telescopeEntries = \Laravel\Telescope\EntryModel::where('content->tenant_id', $tenant->id)
+                ->orWhere('content->hostname', 'like', "%{$tenant->id}%")
+                ->latest()
+                ->limit(50)
+                ->get();
+        }
+
+        // Get recent activity logs
+        $activityLogs = \Illuminate\Support\Facades\DB::table('activity_log')
+            ->where('log_name', $tenant->id)
+            ->orWhere('subject_type', 'like', "%{$tenant->id}%")
+            ->latest('created_at')
+            ->limit(100)
+            ->get();
+
+        // Calculate Telescope stats
+        $telescopeStats = [
+            'total_requests' => 0,
+            'total_exceptions' => 0,
+            'total_queries' => 0,
+            'avg_response_time' => 0,
+        ];
+
+        if (class_exists('\Laravel\Telescope\EntryModel')) {
+            $telescopeStats['total_requests'] = \Laravel\Telescope\EntryModel::where('type', 'request')
+                ->where('content->tenant_id', $tenant->id)
+                ->count();
+
+            $telescopeStats['total_exceptions'] = \Laravel\Telescope\EntryModel::where('type', 'exception')
+                ->where('content->tenant_id', $tenant->id)
+                ->count();
+
+            $telescopeStats['total_queries'] = \Laravel\Telescope\EntryModel::where('type', 'query')
+                ->where('content->tenant_id', $tenant->id)
+                ->count();
+
+            $avgTime = \Laravel\Telescope\EntryModel::where('type', 'request')
+                ->where('content->tenant_id', $tenant->id)
+                ->avg('content->duration');
+
+            $telescopeStats['avg_response_time'] = round($avgTime ?? 0, 2);
+        }
+
+        return view('super-admin.tenants.show', compact('tenant', 'usage', 'telescopeEntries', 'activityLogs', 'telescopeStats'));
     }
 
     /**

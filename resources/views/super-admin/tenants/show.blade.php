@@ -111,6 +111,100 @@
             </div>
         </div>
 
+        <!-- Telescope Statistics -->
+        <div class="mt-6 bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">📊 Telescope Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <div class="text-sm text-blue-600 font-medium">Total Requests</div>
+                    <div class="text-2xl font-bold text-blue-900 mt-1">{{ number_format($telescopeStats['total_requests']) }}</div>
+                </div>
+
+                <div class="bg-green-50 rounded-lg p-4">
+                    <div class="text-sm text-green-600 font-medium">Total Queries</div>
+                    <div class="text-2xl font-bold text-green-900 mt-1">{{ number_format($telescopeStats['total_queries']) }}</div>
+                </div>
+
+                <div class="bg-red-50 rounded-lg p-4">
+                    <div class="text-sm text-red-600 font-medium">Total Exceptions</div>
+                    <div class="text-2xl font-bold text-red-900 mt-1">{{ number_format($telescopeStats['total_exceptions']) }}</div>
+                </div>
+
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <div class="text-sm text-purple-600 font-medium">Avg Response Time</div>
+                    <div class="text-2xl font-bold text-purple-900 mt-1">{{ $telescopeStats['avg_response_time'] }}ms</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Telescope Entries -->
+        @if(count($telescopeEntries) > 0)
+            <div class="mt-6 bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">🔭 Recent Telescope Entries (Last 50)</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Family</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($telescopeEntries as $entry)
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ $entry->type === 'exception' ? 'bg-red-100 text-red-800' : '' }}
+                                            {{ $entry->type === 'request' ? 'bg-blue-100 text-blue-800' : '' }}
+                                            {{ $entry->type === 'query' ? 'bg-green-100 text-green-800' : '' }}
+                                            {{ !in_array($entry->type, ['exception', 'request', 'query']) ? 'bg-gray-100 text-gray-800' : '' }}">
+                                            {{ $entry->type }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $entry->family_hash ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        <div class="max-w-xs truncate">{{ json_encode($entry->content) }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $entry->created_at->diffForHumans() }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
+
+        <!-- Activity Logs -->
+        @if(count($activityLogs) > 0)
+            <div class="mt-6 bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">📝 Activity Logs (Last 100)</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Causer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($activityLogs as $log)
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $log->description ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->subject_type ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $log->causer_type ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ \Carbon\Carbon::parse($log->created_at)->diffForHumans() }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
+
         <!-- Subscriptions -->
         @if($tenant->subscriptions->count() > 0)
             <div class="mt-6 bg-white rounded-lg shadow p-6">

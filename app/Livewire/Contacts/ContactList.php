@@ -12,17 +12,23 @@ class ContactList extends Component
 {
     use WithPagination;
 
+    // View mode
+    public $viewMode = 'list';
+    public $showAdvancedFilters = false;
+
     // Filters
     public $search = '';
     public $filters = [
         'status' => '',
+        'type' => '',
         'source' => '',
+        'industry' => '',
         'account_id' => '',
         'owner_id' => '',
     ];
 
     // Sorting
-    public $sortBy = 'created_at';
+    public $sortField = 'created_at';
     public $sortDirection = 'desc';
 
     /**
@@ -41,12 +47,14 @@ class ContactList extends Component
     /**
      * Clear all filters
      */
-    public function clearFilters()
+    public function resetFilters()
     {
         $this->search = '';
         $this->filters = [
             'status' => '',
+            'type' => '',
             'source' => '',
+            'industry' => '',
             'account_id' => '',
             'owner_id' => '',
         ];
@@ -58,12 +66,23 @@ class ContactList extends Component
      */
     public function sortBy($column)
     {
-        if ($this->sortBy === $column) {
+        if ($this->sortField === $column) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
-            $this->sortBy = $column;
+            $this->sortField = $column;
             $this->sortDirection = 'asc';
         }
+    }
+
+    /**
+     * Delete contact
+     */
+    public function deleteContact($contactId)
+    {
+        $contact = Contact::findOrFail($contactId);
+        $contact->delete();
+
+        session()->flash('success', 'Kişi başarıyla silindi.');
     }
 
     public function render()
@@ -80,8 +99,14 @@ class ContactList extends Component
             ->when($this->filters['status'], function ($q) {
                 $q->where('status', $this->filters['status']);
             })
+            ->when($this->filters['type'], function ($q) {
+                $q->where('type', $this->filters['type']);
+            })
             ->when($this->filters['source'], function ($q) {
                 $q->where('lead_source', $this->filters['source']);
+            })
+            ->when($this->filters['industry'], function ($q) {
+                $q->where('industry', $this->filters['industry']);
             })
             ->when($this->filters['account_id'], function ($q) {
                 $q->where('account_id', $this->filters['account_id']);
@@ -91,15 +116,16 @@ class ContactList extends Component
             });
 
         // Apply sorting
-        $query->orderBy($this->sortBy, $this->sortDirection);
+        $query->orderBy($this->sortField, $this->sortDirection);
 
         $contacts = $query->paginate(15);
 
         // Calculate stats
         $stats = [
             'total' => Contact::count(),
-            'active' => Contact::where('status', 'active')->count(),
-            'high_engagement' => Contact::where('engagement_score', '>=', 70)->count(),
+            'this_month' => Contact::whereMonth('created_at', now()->month)->count(),
+            'with_accounts' => Contact::whereNotNull('account_id')->count(),
+            'vip' => Contact::where('is_vip', true)->count(),
         ];
 
         // Get data for filters

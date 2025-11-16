@@ -59,9 +59,16 @@ class ImpersonateController extends Controller
         // Get tenant domain
         $domain = $tenant->domains->first()?->domain ?? 'localhost';
 
+        // Get port from current request
+        $port = request()->getPort();
+        $portString = ($port && !in_array($port, [80, 443])) ? ':' . $port : '';
+
+        // Determine protocol
+        $protocol = request()->secure() ? 'https' : 'http';
+
         // Redirect to tenant dashboard
         return redirect()
-            ->away('http://' . $domain . '/dashboard')
+            ->away($protocol . '://' . $domain . $portString . '/dashboard')
             ->with('impersonating', true)
             ->with('info', 'You are now impersonating ' . $tenant->name);
     }
