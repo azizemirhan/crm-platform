@@ -94,6 +94,28 @@ create-demo-tenant: ## Demo tenant oluştur (acme-corp)
 	@echo "Creating Demo Tenant..."
 	@docker-compose exec app php artisan tinker --execute="if(App\Models\Tenant::where('id','acme-corp')->exists()){echo 'Demo tenant already exists!'.PHP_EOL;exit;}\$$t=App\Models\Tenant::create(['id'=>'acme-corp','name'=>'Acme Corporation','slug'=>'acme-corp','email'=>'admin@acme.com','schema_name'=>'tenant_acme_corp','owner_name'=>'John Doe','owner_email'=>'john@acme.com','plan'=>'professional','status'=>'active','max_users'=>25,'max_contacts'=>10000,'max_storage_mb'=>10000]);\$$t->domains()->create(['domain'=>'acme-corp.localhost']);\$$t->run(function(){App\Models\User::create(['name'=>'John Doe','email'=>'john@acme.com','password'=>bcrypt('password'),'email_verified_at'=>now(),'is_owner'=>true]);App\Models\Team::create(['name'=>'Sales Team','slug'=>'sales']);});echo '✓ Demo tenant created!'.PHP_EOL;echo 'Domain: http://acme-corp.localhost:8080'.PHP_EOL;echo 'Login: john@acme.com / password'.PHP_EOL;"
 
+seed-demo-tenants: tenant-migrate ## 2 demo tenant oluştur (users ve accounts ile)
+	@echo "🌱 Creating demo tenants with sample data..."
+	docker-compose exec app php artisan db:seed --class=DemoTenantSeeder
+	@echo ""
+	@echo "✅ Demo tenants created!"
+	@echo ""
+	@echo "📋 Tenant 1: Tech Solutions Ltd"
+	@echo "   Domain: http://tech-solutions.localhost:8080"
+	@echo "   Users:"
+	@echo "     - sarah@techsolutions.com / password (CEO)"
+	@echo "     - michael@techsolutions.com / password (Sales Manager)"
+	@echo "     - emma@techsolutions.com / password (Sales Rep)"
+	@echo "   Accounts: 5 companies"
+	@echo ""
+	@echo "📋 Tenant 2: Creative Agency"
+	@echo "   Domain: http://creative-agency.localhost:8080"
+	@echo "   Users:"
+	@echo "     - alex@creativeagency.com / password (Creative Director)"
+	@echo "     - jessica@creativeagency.com / password (Account Manager)"
+	@echo "     - david@creativeagency.com / password (Designer)"
+	@echo "   Accounts: 5 companies"
+
 tenant-info: ## Tenant bilgilerini göster
 	@docker-compose exec app php artisan tinker --execute="if(App\Models\Tenant::count()==0){echo 'No tenants found.'.PHP_EOL;exit;}App\Models\Tenant::with('domains')->get()->each(function(\$$t){echo '═══════════════════════════════════'.PHP_EOL;echo 'ID: '.\$$t->id.PHP_EOL;echo 'Name: '.\$$t->name.PHP_EOL;echo 'Email: '.\$$t->email.PHP_EOL;echo 'Plan: '.\$$t->plan.PHP_EOL;echo 'Status: '.\$$t->status.PHP_EOL;echo 'Domain: '.(\$$t->domains->first()?->domain ?? 'N/A').PHP_EOL;echo 'Schema: '.\$$t->schema_name.PHP_EOL;});"
 
