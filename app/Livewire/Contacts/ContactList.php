@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Contacts;
 
+use App\Models\Account;
 use App\Models\Contact;
 use App\Models\User;
 use Livewire\Component;
@@ -13,8 +14,12 @@ class ContactList extends Component
 
     // Filters
     public $search = '';
-    public $status = '';
-    public $source = '';
+    public $filters = [
+        'status' => '',
+        'source' => '',
+        'account_id' => '',
+        'owner_id' => '',
+    ];
 
     // Sorting
     public $sortBy = 'created_at';
@@ -28,12 +33,7 @@ class ContactList extends Component
         $this->resetPage();
     }
 
-    public function updatedStatus()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedSource()
+    public function updatedFilters()
     {
         $this->resetPage();
     }
@@ -44,8 +44,12 @@ class ContactList extends Component
     public function clearFilters()
     {
         $this->search = '';
-        $this->status = '';
-        $this->source = '';
+        $this->filters = [
+            'status' => '',
+            'source' => '',
+            'account_id' => '',
+            'owner_id' => '',
+        ];
         $this->resetPage();
     }
 
@@ -73,11 +77,17 @@ class ContactList extends Component
                         ->orWhere('phone', 'like', "%{$this->search}%");
                 });
             })
-            ->when($this->status, function ($q) {
-                $q->where('status', $this->status);
+            ->when($this->filters['status'], function ($q) {
+                $q->where('status', $this->filters['status']);
             })
-            ->when($this->source, function ($q) {
-                $q->where('lead_source', $this->source);
+            ->when($this->filters['source'], function ($q) {
+                $q->where('lead_source', $this->filters['source']);
+            })
+            ->when($this->filters['account_id'], function ($q) {
+                $q->where('account_id', $this->filters['account_id']);
+            })
+            ->when($this->filters['owner_id'], function ($q) {
+                $q->where('owner_id', $this->filters['owner_id']);
             });
 
         // Apply sorting
@@ -92,9 +102,15 @@ class ContactList extends Component
             'high_engagement' => Contact::where('engagement_score', '>=', 70)->count(),
         ];
 
+        // Get data for filters
+        $accounts = Account::orderBy('name')->get();
+        $users = User::orderBy('name')->get();
+
         return view('livewire.contacts.contact-list', [
             'contacts' => $contacts,
             'stats' => $stats,
+            'accounts' => $accounts,
+            'users' => $users,
         ]);
     }
 }

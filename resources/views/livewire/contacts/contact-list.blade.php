@@ -92,10 +92,10 @@
                     <label class="filter-label">
                         <i class="bi bi-search"></i> Ara
                     </label>
-                    <input type="text" 
-                           class="filter-input" 
+                    <input type="text"
+                           class="filter-input"
                            placeholder="İsim, e-posta veya telefon..."
-                           wire:model.live.debounce.300ms="filters.search">
+                           wire:model.live.debounce.300ms="search">
                 </div>
 
                 <div class="filter-group">

@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
-<<<<<<< HEAD
     
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    {{-- Stack Styles --}}
-=======
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/tr.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
->>>>>>> claude/lead-contact-blade-setup-011grna4xFntttFLudh7ViEa
     @stack('styles')
 </head>
 <body>
@@ -95,20 +91,6 @@
                     <span>Leads</span>
                     <span class="badge bg-warning text-dark">12</span>
                 </a>
-<<<<<<< HEAD
-                
-                <a href="#" class="sidebar-secondary-item">
-                    <i class="bi bi-people"></i>
-                    <span>Contacts</span>
-                </a>
-                
-                <a href="#" class="sidebar-secondary-item">
-                    <i class="bi bi-building"></i>
-                    <span>Accounts</span>
-                </a>
-                
-                <a href="#" class="sidebar-secondary-item">
-=======
 
                 <a href="{{ route('contacts.index') }}" class="sidebar-secondary-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i>
@@ -121,7 +103,6 @@
                 </a>
 
                 <a href="{{ route('opportunities.index') }}" class="sidebar-secondary-item {{ request()->routeIs('opportunities.*') ? 'active' : '' }}">
->>>>>>> claude/lead-contact-blade-setup-011grna4xFntttFLudh7ViEa
                     <i class="bi bi-trophy"></i>
                     <span>Opportunities</span>
                     <span class="badge bg-success">8</span>
@@ -132,12 +113,12 @@
             <div class="sidebar-secondary-section">
                 <div class="sidebar-secondary-section-title">Activities</div>
 
-                <a href="#" class="sidebar-secondary-item">
+                <a href="{{ route('calls.index') }}" class="sidebar-secondary-item {{ request()->routeIs('calls.*') ? 'active' : '' }}">
                     <i class="bi bi-telephone"></i>
                     <span>Calls</span>
                 </a>
 
-                <a href="#" class="sidebar-secondary-item">
+                <a href="{{ route('emails.index') }}" class="sidebar-secondary-item {{ request()->routeIs('emails.*') ? 'active' : '' }}">
                     <i class="bi bi-envelope"></i>
                     <span>Emails</span>
                 </a>
@@ -229,11 +210,11 @@
                     </div>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Settings</a></li>
+                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="{{ route('settings.index') }}"><i class="bi bi-gear me-2"></i> Settings</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('tenant.logout') }}">
                             @csrf
                             <button type="submit" class="dropdown-item text-danger">
                                 <i class="bi bi-box-arrow-right me-2"></i> Logout
@@ -291,11 +272,8 @@
             };
         });
     </script>
-<<<<<<< HEAD
-=======
 
     @livewireScripts
     @stack('scripts')
->>>>>>> claude/lead-contact-blade-setup-011grna4xFntttFLudh7ViEa
 </body>
 </html>

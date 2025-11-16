@@ -181,7 +181,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
             {{-- Status and Assignment Section --}}
             <div class="form-section">
                 <div class="section-header">
@@ -200,7 +199,6 @@
                             <label class="form-label">
                                 Durum
                                 <span class="required">*</span>
-=======
                 {{-- Status and Source Section --}}
                 <div class="form-section mb-4">
                     <h6 class="section-title mb-3">
@@ -251,7 +249,6 @@
                         <div class="col-md-4">
                             <label for="owner_id" class="form-label fw-semibold">
                                 Sahip <span class="text-danger">*</span>
->>>>>>> claude/lead-contact-blade-setup-011grna4xFntttFLudh7ViEa
                             </label>
                             <div class="select-wrapper">
                                 <span class="select-icon">

@@ -102,16 +102,16 @@ class DashboardController extends Controller
         $opportunities = $query->get();
 
         $pipeline = [];
-        foreach (Opportunity::$stages as $stage => $config) {
+        foreach (Opportunity::$stages as $stage => $label) {
             if (in_array($stage, ['closed_won', 'closed_lost'])) {
                 continue;
             }
 
             $stageOpportunities = $opportunities->where('stage', $stage);
-            
+
             $pipeline[] = [
                 'stage' => $stage,
-                'label' => $config['label'],
+                'label' => $label,
                 'count' => $stageOpportunities->count(),
                 'total_value' => $stageOpportunities->sum('amount'),
                 'weighted_value' => $stageOpportunities->sum('weighted_amount'),
