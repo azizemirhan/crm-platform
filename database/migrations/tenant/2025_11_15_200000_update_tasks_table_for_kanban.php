@@ -17,11 +17,13 @@ return new class extends Migration
             });
         }
 
-        // Update status enum to include todo and in_review
-        DB::statement("ALTER TABLE tasks MODIFY COLUMN status ENUM('todo', 'not_started', 'in_progress', 'in_review', 'waiting_on_someone', 'completed', 'deferred', 'cancelled') DEFAULT 'todo'");
+        // Note: status enum update is handled by 2025_11_16_fix_tasks_status_enum.php
 
-        // Update priority enum to include medium
-        DB::statement("ALTER TABLE tasks MODIFY COLUMN priority ENUM('low', 'medium', 'normal', 'high', 'urgent') DEFAULT 'medium'");
+        // PostgreSQL: Update priority to include 'medium'
+        DB::statement("ALTER TABLE tasks DROP CONSTRAINT IF EXISTS tasks_priority_check");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority TYPE VARCHAR(50)");
+        DB::statement("ALTER TABLE tasks ADD CONSTRAINT tasks_priority_check CHECK (priority IN ('low', 'medium', 'normal', 'high', 'urgent'))");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority SET DEFAULT 'medium'");
 
         // Add taskable columns as aliases
         if (!Schema::hasColumn('tasks', 'taskable_type')) {
@@ -40,7 +42,10 @@ return new class extends Migration
             $table->dropColumn(['taskable_type', 'taskable_id']);
         });
 
-        DB::statement("ALTER TABLE tasks MODIFY COLUMN status ENUM('not_started', 'in_progress', 'waiting_on_someone', 'completed', 'deferred', 'cancelled') DEFAULT 'not_started'");
-        DB::statement("ALTER TABLE tasks MODIFY COLUMN priority ENUM('low', 'normal', 'high', 'urgent') DEFAULT 'normal'");
+        // PostgreSQL: Restore original priority enum
+        DB::statement("ALTER TABLE tasks DROP CONSTRAINT IF EXISTS tasks_priority_check");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority TYPE VARCHAR(50)");
+        DB::statement("ALTER TABLE tasks ADD CONSTRAINT tasks_priority_check CHECK (priority IN ('low', 'normal', 'high', 'urgent'))");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority SET DEFAULT 'normal'");
     }
 };
