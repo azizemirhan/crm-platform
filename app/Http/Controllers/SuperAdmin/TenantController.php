@@ -65,12 +65,20 @@ class TenantController extends Controller
         }
 
         // Get recent activity logs
-        $activityLogs = \Illuminate\Support\Facades\DB::table('activity_log')
-            ->where('log_name', $tenant->id)
-            ->orWhere('subject_type', 'like', "%{$tenant->id}%")
-            ->latest('created_at')
-            ->limit(100)
-            ->get();
+        $activityLogs = [];
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('activity_log')) {
+                $activityLogs = \Illuminate\Support\Facades\DB::table('activity_log')
+                    ->where('log_name', $tenant->id)
+                    ->orWhere('subject_type', 'like', "%{$tenant->id}%")
+                    ->latest('created_at')
+                    ->limit(100)
+                    ->get();
+            }
+        } catch (\Exception $e) {
+            // If activity log is not available, continue without it
+            $activityLogs = [];
+        }
 
         // Calculate Telescope stats
         $telescopeStats = [
