@@ -96,7 +96,6 @@ create-demo-tenant: ## Demo tenant oluştur (acme-corp)
 
 seed-demo-tenants: ## 2 demo tenant oluştur (users ve accounts ile)
 	@echo "🌱 Creating demo tenants with sample data..."
-	docker-compose exec app php artisan tenants:migrate-fresh
 	docker-compose exec app php artisan db:seed --class=DemoTenantSeeder
 	@echo ""
 	@echo "✅ Demo tenants created!"

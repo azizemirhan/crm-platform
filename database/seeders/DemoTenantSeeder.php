@@ -45,6 +45,11 @@ class DemoTenantSeeder extends Seeder
         $tenant->domains()->create(['domain' => 'tech-solutions.localhost']);
         echo "  ✅ Tenant created\n";
 
+        // Run migrations for this tenant
+        echo "  🔄 Running migrations...\n";
+        \Artisan::call('tenants:migrate', ['--tenants' => $tenant->id]);
+        echo "  ✅ Migrations completed\n";
+
         // Create users and accounts within tenant context
         $tenant->run(function () {
             // Create team
@@ -187,6 +192,11 @@ class DemoTenantSeeder extends Seeder
 
         $tenant->domains()->create(['domain' => 'creative-agency.localhost']);
         echo "  ✅ Tenant created\n";
+
+        // Run migrations for this tenant
+        echo "  🔄 Running migrations...\n";
+        \Artisan::call('tenants:migrate', ['--tenants' => $tenant->id]);
+        echo "  ✅ Migrations completed\n";
 
         $tenant->run(function () {
             $team = Team::create([
