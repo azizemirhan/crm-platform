@@ -47,10 +47,3 @@ Route::get('/register', [\App\Http\Controllers\Central\TenantRegistrationControl
 
 Route::post('/register', [\App\Http\Controllers\Central\TenantRegistrationController::class, 'store'])
     ->name('tenant.register.store');
-
-/*
-|--------------------------------------------------------------------------
-| Super Admin Routes
-|--------------------------------------------------------------------------
-*/
-require __DIR__.'/super-admin.php';
