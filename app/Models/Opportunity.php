@@ -32,6 +32,7 @@ class Opportunity extends Model
     ];
 
     protected $fillable = [
+        'team_id',
         'name',
         'description',
         'amount',

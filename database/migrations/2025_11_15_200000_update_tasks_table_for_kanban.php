@@ -17,6 +17,14 @@ return new class extends Migration
             });
         }
 
+        // Add owner_id column (from HasOwner trait)
+        if (!Schema::hasColumn('tasks', 'owner_id')) {
+            Schema::table('tasks', function (Blueprint $table) {
+                $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
+                $table->index('owner_id');
+            });
+        }
+
         // PostgreSQL: Add new enum values to status
         DB::statement("ALTER TYPE tasks_status_enum RENAME TO tasks_status_enum_old");
         DB::statement("CREATE TYPE tasks_status_enum AS ENUM('todo', 'not_started', 'in_progress', 'in_review', 'waiting_on_someone', 'completed', 'deferred', 'cancelled')");
@@ -45,6 +53,7 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             $table->dropColumn('order');
+            $table->dropColumn('owner_id');
             $table->dropColumn(['taskable_type', 'taskable_id']);
         });
 

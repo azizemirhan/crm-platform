@@ -4,6 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @if(session('success'))
+        <meta name="flash-success" content="{{ session('success') }}">
+    @endif
+    @if(session('error'))
+        <meta name="flash-error" content="{{ session('error') }}">
+    @endif
+    @if(session('info'))
+        <meta name="flash-info" content="{{ session('info') }}">
+    @endif
+    @if(session('warning'))
+        <meta name="flash-warning" content="{{ session('warning') }}">
+    @endif
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
