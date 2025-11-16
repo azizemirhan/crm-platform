@@ -34,16 +34,22 @@ class ImpersonateController extends Controller
         tenancy()->initialize($tenant);
 
         // Get tenant's owner user
-        $tenantOwner = $tenant->run(function () {
-            return \App\Models\User::where('is_owner', true)->first();
-        });
+        $tenantOwner = $tenant->run(function () use ($tenant) {
+            // Try by is_owner flag first
+            $owner = \App\Models\User::where('is_owner', true)->first();
 
-        if (!$tenantOwner) {
-            // If no owner, get first user
-            $tenantOwner = $tenant->run(function () {
-                return \App\Models\User::first();
-            });
-        }
+            if (!$owner) {
+                // Fallback: try by owner_email
+                $owner = \App\Models\User::where('email', $tenant->owner_email)->first();
+            }
+
+            if (!$owner) {
+                // Last resort: get first user
+                $owner = \App\Models\User::first();
+            }
+
+            return $owner;
+        });
 
         if ($tenantOwner) {
             // Login as tenant user

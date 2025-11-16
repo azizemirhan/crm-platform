@@ -79,6 +79,7 @@ echo '✅ Domain created: ' . \$domain->domain . PHP_EOL;
         'email' => 'john@acme.com',
         'password' => bcrypt('password'),
         'email_verified_at' => now(),
+        'is_owner' => true,
     ]);
     echo '✅ User created: ' . \$user->email . PHP_EOL;
 
