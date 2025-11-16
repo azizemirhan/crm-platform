@@ -113,12 +113,12 @@
             <div class="sidebar-secondary-section">
                 <div class="sidebar-secondary-section-title">Activities</div>
 
-                <a href="#" class="sidebar-secondary-item">
+                <a href="{{ route('calls.index') }}" class="sidebar-secondary-item {{ request()->routeIs('calls.*') ? 'active' : '' }}">
                     <i class="bi bi-telephone"></i>
                     <span>Calls</span>
                 </a>
 
-                <a href="#" class="sidebar-secondary-item">
+                <a href="{{ route('emails.index') }}" class="sidebar-secondary-item {{ request()->routeIs('emails.*') ? 'active' : '' }}">
                     <i class="bi bi-envelope"></i>
                     <span>Emails</span>
                 </a>

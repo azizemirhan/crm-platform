@@ -10,6 +10,8 @@ use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\CallController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -135,6 +137,35 @@ Route::middleware([
             Route::post('/{task}/uncomplete', [TaskController::class, 'uncomplete'])->name('uncomplete');
             Route::patch('/{task}/status', [TaskController::class, 'updateStatus'])->name('updateStatus');
             Route::post('/reorder', [TaskController::class, 'reorder'])->name('reorder');
+        });
+
+        // Emails
+        Route::prefix('emails')->name('emails.')->group(function () {
+            Route::get('/', [EmailController::class, 'index'])->name('index');
+            Route::get('/compose', [EmailController::class, 'compose'])->name('compose');
+            Route::post('/send', [EmailController::class, 'send'])->name('send');
+            Route::get('/{email}', [EmailController::class, 'show'])->name('show');
+
+            // Email actions
+            Route::post('/{email}/star', [EmailController::class, 'toggleStar'])->name('star');
+            Route::post('/{email}/archive', [EmailController::class, 'archive'])->name('archive');
+            Route::delete('/{email}', [EmailController::class, 'destroy'])->name('destroy');
+
+            // Email templates
+            Route::get('/templates/list', [EmailController::class, 'templates'])->name('templates');
+        });
+
+        // Calls
+        Route::prefix('calls')->name('calls.')->group(function () {
+            Route::get('/', [CallController::class, 'index'])->name('index');
+            Route::get('/{call}', [CallController::class, 'show'])->name('show');
+            Route::post('/initiate', [CallController::class, 'initiate'])->name('initiate');
+            Route::put('/{call}', [CallController::class, 'update'])->name('update');
+
+            // Twilio webhook (no auth middleware)
+            Route::post('/webhook/status/{call}', [CallController::class, 'statusWebhook'])
+                ->name('webhook.status')
+                ->withoutMiddleware(['auth', 'verified']);
         });
 
         // Profile
