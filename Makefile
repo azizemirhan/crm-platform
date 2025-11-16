@@ -42,6 +42,12 @@ cache-clear: ## Tüm cache'leri temizle
 	docker-compose exec app php artisan route:clear
 	docker-compose exec app php artisan view:clear
 
+composer-dump: ## Composer autoloader'ı yenile
+	docker-compose exec app composer dump-autoload -o
+
+fix-autoload: composer-dump cache-clear ## Autoloader ve cache sorunlarını düzelt
+	@echo "✅ Autoloader ve cache temizlendi!"
+
 queue-work: ## Queue worker başlat
 	docker-compose exec app php artisan queue:work
 
@@ -94,6 +100,9 @@ install: up ## İlk kurulum (dependencies + migrations + super admin + demo tena
 	docker-compose exec app composer install
 	docker-compose exec app npm install
 	docker-compose exec app php artisan key:generate
+	@echo ""
+	@echo "🔧 Fixing autoloader..."
+	$(MAKE) fix-autoload
 	@echo ""
 	@echo "📊 Running migrations..."
 	$(MAKE) migrate
