@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? config('app.name', 'CRM Platform') }}</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/tr.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+    @stack('styles')
 </head>
 <body>
     <!-- Primary Sidebar (Icons) -->
@@ -79,23 +84,23 @@
             <div class="sidebar-secondary-section">
                 <div class="sidebar-secondary-section-title">CRM</div>
                 
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('leads.*') ? 'active' : '' }}">
+                <a href="{{ route('leads.index') }}" class="sidebar-secondary-item {{ request()->routeIs('leads.*') ? 'active' : '' }}">
                     <i class="bi bi-stars"></i>
                     <span>Leads</span>
                     <span class="badge bg-warning text-dark">12</span>
                 </a>
-                
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
+
+                <a href="{{ route('contacts.index') }}" class="sidebar-secondary-item {{ request()->routeIs('contacts.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i>
                     <span>Contacts</span>
                 </a>
-                
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('accounts.*') ? 'active' : '' }}">
+
+                <a href="{{ route('accounts.index') }}" class="sidebar-secondary-item {{ request()->routeIs('accounts.*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i>
                     <span>Accounts</span>
                 </a>
-                
-                <a href="#" class="sidebar-secondary-item {{ request()->routeIs('opportunities.*') ? 'active' : '' }}">
+
+                <a href="{{ route('opportunities.index') }}" class="sidebar-secondary-item {{ request()->routeIs('opportunities.*') ? 'active' : '' }}">
                     <i class="bi bi-trophy"></i>
                     <span>Opportunities</span>
                     <span class="badge bg-success">8</span>
@@ -105,23 +110,23 @@
             <!-- Activities Section -->
             <div class="sidebar-secondary-section">
                 <div class="sidebar-secondary-section-title">Activities</div>
-                
+
                 <a href="#" class="sidebar-secondary-item">
                     <i class="bi bi-telephone"></i>
                     <span>Calls</span>
                 </a>
-                
+
                 <a href="#" class="sidebar-secondary-item">
                     <i class="bi bi-envelope"></i>
                     <span>Emails</span>
                 </a>
-                
-                <a href="#" class="sidebar-secondary-item">
+
+                <a href="{{ route('meetings.index') }}" class="sidebar-secondary-item {{ request()->routeIs('meetings.*') ? 'active' : '' }}">
                     <i class="bi bi-calendar-event"></i>
                     <span>Meetings</span>
                 </a>
-                
-                <a href="#" class="sidebar-secondary-item">
+
+                <a href="{{ route('tasks.index') }}" class="sidebar-secondary-item {{ request()->routeIs('tasks.*') ? 'active' : '' }}">
                     <i class="bi bi-check2-square"></i>
                     <span>Tasks</span>
                     <span class="badge bg-danger">3</span>
@@ -316,6 +321,7 @@
         });
     </script>
 
+    @livewireScripts
     @stack('scripts')
 </body>
 </html>

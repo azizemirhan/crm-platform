@@ -7,6 +7,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
@@ -77,11 +78,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{opportunity}', [OpportunityController::class, 'show'])->name('show');
         Route::get('/{opportunity}/edit', [OpportunityController::class, 'edit'])->name('edit');
         Route::delete('/{opportunity}', [OpportunityController::class, 'destroy'])->name('destroy');
-        
+
         // Opportunity actions
         Route::patch('/{opportunity}/stage', [OpportunityController::class, 'updateStage'])->name('stage.update');
         Route::post('/{opportunity}/win', [OpportunityController::class, 'markAsWon'])->name('win');
         Route::post('/{opportunity}/lose', [OpportunityController::class, 'markAsLost'])->name('lose');
+    });
+
+    // Meetings
+    Route::prefix('meetings')->name('meetings.')->group(function () {
+        Route::get('/', [MeetingController::class, 'index'])->name('index');
+        Route::get('/events', [MeetingController::class, 'getEvents'])->name('events');
+        Route::get('/{meeting}', [MeetingController::class, 'show'])->name('show');
+        Route::put('/{meeting}', [MeetingController::class, 'update'])->name('update');
+        Route::delete('/{meeting}', [MeetingController::class, 'destroy'])->name('destroy');
     });
 
     // Activities
@@ -94,14 +104,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Tasks
     Route::prefix('tasks')->name('tasks.')->group(function () {
         Route::get('/', [TaskController::class, 'index'])->name('index');
-        Route::get('/create', [TaskController::class, 'create'])->name('create');
+        Route::get('/data', [TaskController::class, 'getTasks'])->name('data');
+        Route::post('/', [TaskController::class, 'store'])->name('store');
         Route::get('/{task}', [TaskController::class, 'show'])->name('show');
-        Route::get('/{task}/edit', [TaskController::class, 'edit'])->name('edit');
+        Route::put('/{task}', [TaskController::class, 'update'])->name('update');
         Route::delete('/{task}', [TaskController::class, 'destroy'])->name('destroy');
-        
+
         // Task actions
         Route::post('/{task}/complete', [TaskController::class, 'complete'])->name('complete');
         Route::post('/{task}/uncomplete', [TaskController::class, 'uncomplete'])->name('uncomplete');
+        Route::patch('/{task}/status', [TaskController::class, 'updateStatus'])->name('updateStatus');
+        Route::post('/reorder', [TaskController::class, 'reorder'])->name('reorder');
     });
 
     // Profile

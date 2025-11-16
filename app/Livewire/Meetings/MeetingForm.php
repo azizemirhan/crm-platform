@@ -19,6 +19,7 @@ class MeetingForm extends Component
     public $meeting_type = 'in_person';
     public $meeting_link;
     public $priority = 'medium';
+    public $status = 'scheduled';
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -29,6 +30,7 @@ class MeetingForm extends Component
         'meeting_type' => 'required|in:in_person,online,phone',
         'meeting_link' => 'nullable|url',
         'priority' => 'required|in:low,medium,high',
+        'status' => 'required|in:scheduled,completed,cancelled,rescheduled',
     ];
 
     public function mount($meetingId = null, $contactId = null, $date = null)
@@ -57,6 +59,7 @@ class MeetingForm extends Component
             'meeting_type' => $this->meeting_type,
             'meeting_link' => $this->meeting_link,
             'priority' => $this->priority,
+            'status' => $this->status,
             'contact_id' => $this->contactId,
             'owner_id' => auth()->id(),
         ];
