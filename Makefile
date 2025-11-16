@@ -75,7 +75,7 @@ tenant-migrate: ## Tüm tenant migration'larını çalıştır
 	docker-compose exec app php artisan tenants:migrate
 
 tenant-migrate-fresh: ## Tüm tenant'ları sıfırla
-	docker-compose exec app php artisan tenants:migrate:fresh
+	docker-compose exec app php artisan tenants:migrate-fresh
 
 tenant-migrate-rollback: ## Tenant migration'larını geri al
 	docker-compose exec app php artisan tenants:rollback
