@@ -94,8 +94,9 @@ create-demo-tenant: ## Demo tenant oluştur (acme-corp)
 	@echo "Creating Demo Tenant..."
 	@docker-compose exec app php artisan tinker --execute="if(App\Models\Tenant::where('id','acme-corp')->exists()){echo 'Demo tenant already exists!'.PHP_EOL;exit;}\$$t=App\Models\Tenant::create(['id'=>'acme-corp','name'=>'Acme Corporation','slug'=>'acme-corp','email'=>'admin@acme.com','schema_name'=>'tenant_acme_corp','owner_name'=>'John Doe','owner_email'=>'john@acme.com','plan'=>'professional','status'=>'active','max_users'=>25,'max_contacts'=>10000,'max_storage_mb'=>10000]);\$$t->domains()->create(['domain'=>'acme-corp.localhost']);\$$t->run(function(){App\Models\User::create(['name'=>'John Doe','email'=>'john@acme.com','password'=>bcrypt('password'),'email_verified_at'=>now(),'is_owner'=>true]);App\Models\Team::create(['name'=>'Sales Team','slug'=>'sales']);});echo '✓ Demo tenant created!'.PHP_EOL;echo 'Domain: http://acme-corp.localhost:8080'.PHP_EOL;echo 'Login: john@acme.com / password'.PHP_EOL;"
 
-seed-demo-tenants: tenant-migrate ## 2 demo tenant oluştur (users ve accounts ile)
+seed-demo-tenants: ## 2 demo tenant oluştur (users ve accounts ile)
 	@echo "🌱 Creating demo tenants with sample data..."
+	docker-compose exec app php artisan tenants:migrate-fresh
 	docker-compose exec app php artisan db:seed --class=DemoTenantSeeder
 	@echo ""
 	@echo "✅ Demo tenants created!"
