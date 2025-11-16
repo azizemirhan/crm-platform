@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Call;
+use App\Models\Integration;
 use Illuminate\Http\Request;
 use Twilio\Rest\Client;
 
@@ -26,11 +27,18 @@ class CallController extends Controller
             'related_to_id' => 'nullable|integer',
         ]);
 
+        // Get Twilio integration
+        $twilioIntegration = Integration::getConfig('twilio', auth()->user()->team_id);
+
+        if (!$twilioIntegration) {
+            return back()->with('error', 'Twilio integration not configured. Please configure it in Settings > Integrations.');
+        }
+
         $call = Call::create([
             'team_id' => auth()->user()->team_id,
             'user_id' => auth()->id(),
             'direction' => 'outbound',
-            'from_number' => config('services.twilio.phone_number'),
+            'from_number' => $twilioIntegration->getCredential('phone_number'),
             'to_number' => $validated['to_number'],
             'related_to_type' => $validated['related_to_type'] ?? null,
             'related_to_id' => $validated['related_to_id'] ?? null,
@@ -40,13 +48,13 @@ class CallController extends Controller
         // Initiate Twilio call
         try {
             $twilio = new Client(
-                config('services.twilio.sid'),
-                config('services.twilio.token')
+                $twilioIntegration->getCredential('sid'),
+                $twilioIntegration->getCredential('token')
             );
 
             $twilioCall = $twilio->calls->create(
                 $validated['to_number'],
-                config('services.twilio.phone_number'),
+                $twilioIntegration->getCredential('phone_number'),
                 [
                     'record' => true,
                     'statusCallback' => route('calls.webhook.status', $call),
@@ -58,6 +66,8 @@ class CallController extends Controller
                 'call_sid' => $twilioCall->sid,
                 'status' => $twilioCall->status,
             ]);
+
+            $twilioIntegration->incrementUsage();
 
             return response()->json([
                 'success' => true,

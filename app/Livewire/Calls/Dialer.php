@@ -120,12 +120,20 @@ class Dialer extends Component
     {
         $this->validate();
 
+        // Get Twilio integration
+        $twilioIntegration = \App\Models\Integration::getConfig('twilio', auth()->user()->team_id);
+
+        if (!$twilioIntegration) {
+            session()->flash('error', 'Twilio integration not configured. Please configure it in Settings > Integrations.');
+            return;
+        }
+
         try {
             $call = Call::create([
                 'team_id' => auth()->user()->team_id,
                 'user_id' => auth()->id(),
                 'direction' => 'outbound',
-                'from_number' => config('services.twilio.phone_number'),
+                'from_number' => $twilioIntegration->getCredential('phone_number'),
                 'to_number' => $this->phoneNumber,
                 'related_to_type' => $this->relatedToType ?: null,
                 'related_to_id' => $this->relatedToId ?: null,
@@ -134,13 +142,13 @@ class Dialer extends Component
 
             // Initiate Twilio call
             $twilio = new Client(
-                config('services.twilio.sid'),
-                config('services.twilio.token')
+                $twilioIntegration->getCredential('sid'),
+                $twilioIntegration->getCredential('token')
             );
 
             $twilioCall = $twilio->calls->create(
                 $this->phoneNumber,
-                config('services.twilio.phone_number'),
+                $twilioIntegration->getCredential('phone_number'),
                 [
                     'record' => true,
                     'statusCallback' => route('calls.webhook.status', $call),
@@ -152,6 +160,8 @@ class Dialer extends Component
                 'call_sid' => $twilioCall->sid,
                 'status' => $twilioCall->status,
             ]);
+
+            $twilioIntegration->incrementUsage();
 
             $this->currentCall = $call;
             $this->calling = true;

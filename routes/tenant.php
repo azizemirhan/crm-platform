@@ -175,13 +175,15 @@ Route::middleware([
             Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
         });
 
-        // Settings (Admin only)
-        Route::middleware('role:admin')->prefix('settings')->name('settings.')->group(function () {
+        // Settings
+        Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [SettingsController::class, 'index'])->name('index');
             Route::get('/users', [SettingsController::class, 'users'])->name('users');
             Route::get('/roles', [SettingsController::class, 'roles'])->name('roles');
             Route::get('/custom-fields', [SettingsController::class, 'customFields'])->name('custom-fields');
             Route::get('/integrations', [SettingsController::class, 'integrations'])->name('integrations');
+            Route::post('/integrations', [SettingsController::class, 'storeIntegration'])->name('integrations.store');
+            Route::delete('/integrations/{integration}', [SettingsController::class, 'destroyIntegration'])->name('integrations.destroy');
             Route::get('/webhooks', [SettingsController::class, 'webhooks'])->name('webhooks');
         });
     });

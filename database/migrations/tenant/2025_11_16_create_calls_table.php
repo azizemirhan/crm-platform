@@ -63,7 +63,6 @@ return new class extends Migration
             $table->index('status');
             $table->index('started_at');
             $table->index(['team_id', 'direction', 'status']);
-            $table->index(['related_to_type', 'related_to_id']);
         });
     }
 

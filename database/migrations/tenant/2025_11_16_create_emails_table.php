@@ -59,7 +59,6 @@ return new class extends Migration
             $table->index('type');
             $table->index('is_read');
             $table->index(['team_id', 'type', 'is_read']);
-            $table->index(['related_to_type', 'related_to_id']);
             $table->fullText(['subject', 'body_text']);
         });
     }

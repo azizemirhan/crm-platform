@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Integration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class SettingsController extends Controller
 {
@@ -43,7 +45,58 @@ class SettingsController extends Controller
      */
     public function integrations()
     {
-        return view('settings.integrations');
+        $integrations = Integration::where('team_id', auth()->user()->team_id)
+            ->orderBy('provider')
+            ->get();
+
+        $availableProviders = Integration::PROVIDERS;
+
+        return view('settings.integrations', compact('integrations', 'availableProviders'));
+    }
+
+    /**
+     * Store or update an integration
+     */
+    public function storeIntegration(Request $request)
+    {
+        $validated = $request->validate([
+            'provider' => 'required|string',
+            'name' => 'required|string|max:255',
+            'is_active' => 'boolean',
+            'credentials' => 'required|array',
+            'config' => 'nullable|array',
+            'notes' => 'nullable|string',
+        ]);
+
+        $validated['team_id'] = auth()->user()->team_id;
+        $validated['type'] = Integration::PROVIDERS[$validated['provider']]['type'] ?? 'other';
+
+        Integration::updateOrCreate(
+            [
+                'team_id' => $validated['team_id'],
+                'provider' => $validated['provider'],
+            ],
+            $validated
+        );
+
+        return Redirect::route('settings.integrations')
+            ->with('success', 'Integration saved successfully!');
+    }
+
+    /**
+     * Delete an integration
+     */
+    public function destroyIntegration(Integration $integration)
+    {
+        // Ensure user can only delete their team's integrations
+        if ($integration->team_id !== auth()->user()->team_id) {
+            abort(403);
+        }
+
+        $integration->delete();
+
+        return Redirect::route('settings.integrations')
+            ->with('success', 'Integration deleted successfully!');
     }
 
     /**
