@@ -1,4 +1,97 @@
 <x-app-layout>
+    @push('styles')
+    <style>
+        /* Profile Page Custom Styles */
+        .profile-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .form-input-focus {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-input-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-alert {
+            animation: slideInDown 0.5s ease-in-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delete-modal-overlay {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .delete-modal-content {
+            animation: scaleIn 0.3s ease-in-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .section-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover .section-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .save-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .save-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .save-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    @endpush
+
     <x-slot name="header">
         <div class="px-4">
             <h2 class="text-2xl font-bold text-gray-900">Profile Settings</h2>
@@ -9,7 +102,7 @@
     <div class="space-y-6 max-w-4xl mx-auto">
             <!-- Success Message -->
             @if(session('success'))
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 shadow-sm">
+                <div class="success-alert bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 shadow-sm">
                     <div class="flex-shrink-0">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -20,10 +113,10 @@
             @endif
 
             <!-- Profile Information -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-100">
+            <div class="profile-card bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-100">
                 <div class="p-8">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="p-2 bg-blue-100 rounded-lg">
+                        <div class="section-icon p-2 bg-blue-100 rounded-lg">
                             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
@@ -136,7 +229,7 @@
 
                         <div class="mt-8 flex justify-end">
                             <button type="submit"
-                                    class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 inline-flex items-center gap-2">
+                                    class="save-button bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 inline-flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
@@ -148,10 +241,10 @@
             </div>
 
             <!-- Delete Account -->
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-red-100">
+            <div class="profile-card bg-white overflow-hidden shadow-lg sm:rounded-xl border border-red-100">
                 <div class="p-8">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="p-2 bg-red-100 rounded-lg">
+                        <div class="section-icon p-2 bg-red-100 rounded-lg">
                             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
@@ -176,9 +269,9 @@
     </div>
 
     <!-- Delete Account Modal -->
-    <div id="deleteAccountModal" class="hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div id="deleteAccountModal" class="delete-modal-overlay hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
         <div class="relative w-full max-w-md">
-            <div class="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+            <div class="delete-modal-content bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
                 <!-- Icon -->
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
                     <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,22 +317,100 @@
 
     @push('scripts')
     <script>
-        // Close modal on ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('deleteAccountModal');
-                if (modal && !modal.classList.contains('hidden')) {
-                    modal.classList.add('hidden');
+        // Profile Page Custom JavaScript
+        (function() {
+            'use strict';
+
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add form-input-focus class to all inputs
+                const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], select, textarea');
+                inputs.forEach(input => {
+                    input.classList.add('form-input-focus');
+                });
+
+                // Form validation feedback
+                const form = document.querySelector('form[action*="profile.update"]');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Saving...';
+
+                            setTimeout(() => {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Save Changes';
+                            }, 5000);
+                        }
+                    });
+                }
+
+                // Auto-dismiss success alert
+                const successAlert = document.querySelector('.success-alert');
+                if (successAlert) {
+                    setTimeout(() => {
+                        successAlert.style.opacity = '0';
+                        successAlert.style.transform = 'translateY(-20px)';
+                        setTimeout(() => {
+                            successAlert.remove();
+                        }, 300);
+                    }, 5000);
+                }
+
+                console.log('Profile page initialized successfully');
+            });
+
+            // Modal functions
+            const modal = document.getElementById('deleteAccountModal');
+            if (modal) {
+                // Open modal
+                window.openDeleteModal = function() {
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                // Close modal
+                window.closeDeleteModal = function() {
+                    const modalContent = modal.querySelector('.delete-modal-content');
+                    modalContent.style.transform = 'scale(0.9)';
+                    modalContent.style.opacity = '0';
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        document.body.style.overflow = '';
+                        modalContent.style.transform = 'scale(1)';
+                        modalContent.style.opacity = '1';
+                    }, 200);
+                };
+
+                // Close modal on ESC key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                        closeDeleteModal();
+                    }
+                });
+
+                // Close modal when clicking outside
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeDeleteModal();
+                    }
+                });
+
+                // Update existing button onclick
+                const deleteButton = document.querySelector('button[onclick*="deleteAccountModal"]');
+                if (deleteButton) {
+                    deleteButton.setAttribute('onclick', 'openDeleteModal()');
+                }
+
+                // Update cancel button onclick
+                const cancelButton = modal.querySelector('button[onclick*="deleteAccountModal"]');
+                if (cancelButton) {
+                    cancelButton.setAttribute('onclick', 'closeDeleteModal()');
                 }
             }
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('deleteAccountModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-            }
-        });
+        })();
     </script>
     @endpush
 </x-app-layout>

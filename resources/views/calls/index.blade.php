@@ -1,4 +1,46 @@
 <x-app-layout>
+    @push('styles')
+    <style>
+        /* Calls Page Custom Styles */
+        .calls-header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .dialer-modal-overlay {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .dialer-modal-content {
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .call-button-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+    @endpush
+
     <x-slot name="header">
         <div class="flex justify-between items-center px-4">
             <div>
@@ -19,9 +61,9 @@
     </div>
 
     <!-- Modern Dialer Modal -->
-    <div id="dialerModal" class="hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div id="dialerModal" class="dialer-modal-overlay hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
         <div class="relative w-full max-w-md">
-            <div class="bg-white rounded-2xl shadow-2xl transform transition-all">
+            <div class="dialer-modal-content bg-white rounded-2xl shadow-2xl transform transition-all">
                 <!-- Close Button -->
                 <button onclick="closeDialer()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors z-10">
                     <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,32 +78,63 @@
 
     @push('scripts')
     <script>
-        function openDialer() {
-            document.getElementById('dialerModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
+        // Calls Page Custom JavaScript
+        (function() {
+            'use strict';
 
-        function closeDialer() {
-            document.getElementById('dialerModal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('dialerModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDialer();
-            }
-        });
-
-        // Close on ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
+            window.openDialer = function() {
                 const modal = document.getElementById('dialerModal');
-                if (modal && !modal.classList.contains('hidden')) {
-                    closeDialer();
-                }
-            }
-        });
+                if (!modal) return;
+
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+
+                // Add entrance animation
+                setTimeout(() => {
+                    modal.style.opacity = '1';
+                }, 10);
+
+                console.log('Dialer modal opened');
+            };
+
+            window.closeDialer = function() {
+                const modal = document.getElementById('dialerModal');
+                if (!modal) return;
+
+                // Add exit animation
+                modal.style.opacity = '0';
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    modal.style.opacity = '1';
+                }, 300);
+
+                console.log('Dialer modal closed');
+            };
+
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                const modal = document.getElementById('dialerModal');
+                if (!modal) return;
+
+                // Close modal when clicking outside
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeDialer();
+                    }
+                });
+
+                // Close on ESC key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                        closeDialer();
+                    }
+                });
+
+                console.log('Calls page initialized successfully');
+            });
+        })();
     </script>
     @endpush
 </x-app-layout>
