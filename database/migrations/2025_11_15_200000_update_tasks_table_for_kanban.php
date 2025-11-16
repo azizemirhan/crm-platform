@@ -12,12 +12,40 @@ return new class extends Migration
         Schema::table('tasks', function (Blueprint $table) {
             // Add order column
             if (!Schema::hasColumn('tasks', 'order')) {
+        // Add order column
+        if (!Schema::hasColumn('tasks', 'order')) {
+            Schema::table('tasks', function (Blueprint $table) {
                 $table->integer('order')->default(0);
                 $table->index('order');
             }
 
             // Add taskable columns (polymorphic relation)
             if (!Schema::hasColumn('tasks', 'taskable_type')) {
+        // Add owner_id column (from HasOwner trait)
+        if (!Schema::hasColumn('tasks', 'owner_id')) {
+            Schema::table('tasks', function (Blueprint $table) {
+                $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
+                $table->index('owner_id');
+            });
+        }
+
+        // PostgreSQL: Add new enum values to status
+        DB::statement("ALTER TYPE tasks_status_enum RENAME TO tasks_status_enum_old");
+        DB::statement("CREATE TYPE tasks_status_enum AS ENUM('todo', 'not_started', 'in_progress', 'in_review', 'waiting_on_someone', 'completed', 'deferred', 'cancelled')");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN status TYPE tasks_status_enum USING status::text::tasks_status_enum");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN status SET DEFAULT 'todo'");
+        DB::statement("DROP TYPE tasks_status_enum_old");
+
+        // PostgreSQL: Add new enum value to priority
+        DB::statement("ALTER TYPE tasks_priority_enum RENAME TO tasks_priority_enum_old");
+        DB::statement("CREATE TYPE tasks_priority_enum AS ENUM('low', 'medium', 'normal', 'high', 'urgent')");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority TYPE tasks_priority_enum USING priority::text::tasks_priority_enum");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority SET DEFAULT 'medium'");
+        DB::statement("DROP TYPE tasks_priority_enum_old");
+
+        // Add taskable columns as aliases
+        if (!Schema::hasColumn('tasks', 'taskable_type')) {
+            Schema::table('tasks', function (Blueprint $table) {
                 $table->string('taskable_type')->nullable();
                 $table->unsignedBigInteger('taskable_id')->nullable();
                 $table->index(['taskable_type', 'taskable_id']);
@@ -156,5 +184,23 @@ return new class extends Migration
         DB::statement("DROP TYPE task_priority CASCADE");
         DB::statement("ALTER TYPE task_priority_old RENAME TO task_priority");
         DB::statement("ALTER TABLE tasks ALTER COLUMN priority SET DEFAULT 'normal'");
+            $table->dropColumn('order');
+            $table->dropColumn('owner_id');
+            $table->dropColumn(['taskable_type', 'taskable_id']);
+        });
+
+        // PostgreSQL: Revert status enum
+        DB::statement("ALTER TYPE tasks_status_enum RENAME TO tasks_status_enum_old");
+        DB::statement("CREATE TYPE tasks_status_enum AS ENUM('not_started', 'in_progress', 'waiting_on_someone', 'completed', 'deferred', 'cancelled')");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN status TYPE tasks_status_enum USING status::text::tasks_status_enum");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN status SET DEFAULT 'not_started'");
+        DB::statement("DROP TYPE tasks_status_enum_old");
+
+        // PostgreSQL: Revert priority enum
+        DB::statement("ALTER TYPE tasks_priority_enum RENAME TO tasks_priority_enum_old");
+        DB::statement("CREATE TYPE tasks_priority_enum AS ENUM('low', 'normal', 'high', 'urgent')");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority TYPE tasks_priority_enum USING priority::text::tasks_priority_enum");
+        DB::statement("ALTER TABLE tasks ALTER COLUMN priority SET DEFAULT 'normal'");
+        DB::statement("DROP TYPE tasks_priority_enum_old");
     }
 };
